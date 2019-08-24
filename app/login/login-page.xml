@@ -1,0 +1,21 @@
+<Page class="page"
+    navigatingTo="onNavigatingTo" 
+    xmlns="http://schemas.nativescript.org/tns.xsd">
+    
+    <ActionBar class="action-bar">
+        <Label class="action-bar-title" text="Login"></Label>
+    </ActionBar>
+
+    <StackLayout class="form">
+        <StackLayout class="input-field">
+            <TextField class="input input-border" id="usernameField" autocorrect="false" hint="Username" text="{{ username }}" returnKeyType="next"/>
+        </StackLayout>
+
+        <StackLayout class="input-field">
+            <TextField secure="true" hint="Enter some text and click the button" id="passwordField" autocorrect="false" returnKeyType="done"
+                class="input input-border" text="{{ password }}"></TextField>
+        </StackLayout>
+
+        <Button text="Enviar" tap="{{ onTap }}" class="btn btn-primary btn-active" />
+    </StackLayout>
+</Page>
