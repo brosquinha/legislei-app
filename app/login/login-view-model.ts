@@ -1,18 +1,30 @@
-import { Observable } from "tns-core-modules/data/observable";
+import { Observable, EventData } from "tns-core-modules/data/observable";
 import { SecureStorage } from "nativescript-secure-storage";
 
-import { request, getFile, getImage, getJSON, getString } from "tns-core-modules/http";
+import { request } from "tns-core-modules/http";
 import * as applicationSettings from "tns-core-modules/application-settings";
+import { Button } from "tns-core-modules/ui/button/button";
+import { topmost } from "tns-core-modules/ui/frame/frame";
 
 export class LoginViewModel extends Observable {
     constructor() {
         super();
+        let secureStorage = new SecureStorage();
+        const result = secureStorage.getSync({
+            key: "userToken",
+        });
+        if (result)
+            topmost().navigate({
+                moduleName: "subscriptions-home/subscriptions-home-page",
+                backstackVisible: false,
+                clearHistory: true
+            });
     }
 
     username: String = "";
     password: String = "";
 
-    onTap(args) {
+    onTap(args: EventData) {
         const serverURI: String = applicationSettings.getString("serverURI");
         let secureStorage = new SecureStorage();
         request({
@@ -28,12 +40,16 @@ export class LoginViewModel extends Observable {
             if (response.statusCode >= 400)
                 alert(response.content.toJSON().message);
             else {
-                alert("Logado");
                 let userToken: string = response.content.toJSON().token;   
                 const result = secureStorage.setSync({
                     key: "userToken",
                     value: userToken,
-                })
+                });
+                topmost().navigate({
+                    moduleName: "subscriptions-home/subscriptions-home-page",
+                    backstackVisible: false,
+                    clearHistory: true
+                });
             }
         }, (e) => {
             console.log(e);

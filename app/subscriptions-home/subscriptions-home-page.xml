@@ -1,0 +1,7 @@
+<Page class="Page" loaded="onPageLoaded">
+    <ActionBar title="Minhas inscrições" class="action-bar"></ActionBar>
+
+    <StackLayout>
+        <Label text=" {{ subscriptions }}"/>
+    </StackLayout>
+</Page>

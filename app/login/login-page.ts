@@ -6,7 +6,7 @@ logic, and to set up your page’s data binding.
 
 import { Button } from "tns-core-modules/ui/button";
 import { TextField } from "tns-core-modules/ui/text-field";
-import { NavigatedData, Page, EventData } from "tns-core-modules/ui/page";
+import { NavigatedData, Page } from "tns-core-modules/ui/page";
 
 import { LoginViewModel } from "./login-view-model";
 
