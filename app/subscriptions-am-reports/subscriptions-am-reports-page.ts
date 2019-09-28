@@ -1,6 +1,7 @@
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { Page } from "tns-core-modules/ui/page";
-import { topmost } from "tns-core-modules/ui/frame/frame";
+import { Button } from "tns-core-modules/ui/button";
+import { topmost, goBack } from "tns-core-modules/ui/frame/frame";
 
 import { SecureStorage } from "nativescript-secure-storage";
 import { request } from "tns-core-modules/http";
@@ -13,18 +14,15 @@ export function onPageLoaded(args: EventData): void {
     const userToken = secureStorage.getSync({
         key: "userToken",
     });
-
-    let source = fromObject({
-        subscriptions: {
-            parlamentares: [],
-            intervalo: "Carregando"
-        }
-    })
-    page.bindingContext = source;
+    let context_info = page.navigationContext;
+    let reports = null;
     request({
-        url: "https://legislei-stg.herokuapp.com/v1/usuarios/inscricoes",
+        url: `https://legislei-stg.herokuapp.com/v1/relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`,
         method: "GET",
-        headers: {"Authorization": userToken}
+        headers: {
+            "Authorization": userToken,
+            "X-Fields": "id,data_inicial,data_final"
+        }
     }).then((response) => {
         let contentJSON = response.content.toJSON();
         if (response.statusCode == 401) {
@@ -34,22 +32,22 @@ export function onPageLoaded(args: EventData): void {
             topmost().navigate({
                 moduleName: "login/login-page",
                 backstackVisible: false,
-                clearHistory: true
             });
         }
-        source.set("subscriptions", contentJSON)
+        reports = contentJSON;
+        reports.forEach(report => {
+            let finalDate = new Date(Date.parse(report.data_final));;
+            report.data_final_str = finalDate.toLocaleDateString() + "; ";
+        });
+    
+        let source = fromObject({
+            reports: reports,
+            isLoading: false
+        })
+        page.bindingContext = source;
     })
 }
 
-export function onCheckAssemblymanReports(args: EventData): void {
-    const assemblyman_id = args.object.get("data-id")
-    const assemblyman_house = args.object.get("data-house")
-    topmost().navigate({
-        moduleName: "subscriptions-am-reports/subscriptions-am-reports-page",
-        backstackVisible: true,
-        context: {
-            assemblyman_id: assemblyman_id,
-            assemblyman_house: assemblyman_house
-        }
-    });
+export function goBackTo(args: EventData): void {
+    topmost().goBack();
 }

@@ -1,0 +1,10 @@
+<Page class="Page" loaded="onPageLoaded">
+    <ActionBar title="Relatórios disponíveis" class="action-bar"></ActionBar>
+
+    <ActivityIndicator busy="{{ isLoading }}" />
+    <ListView row="0" items="{{ reports }}">
+        <ListView.itemTemplate>
+            <Button class="btn btn-primary" text="{{ data_final_str }}" />
+        </ListView.itemTemplate>
+    </ListView>
+</Page>

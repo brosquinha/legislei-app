@@ -16,7 +16,6 @@ export class LoginViewModel extends Observable {
         if (result)
             topmost().navigate({
                 moduleName: "subscriptions-home/subscriptions-home-page",
-                backstackVisible: false,
                 clearHistory: true
             });
     }
@@ -47,7 +46,6 @@ export class LoginViewModel extends Observable {
                 });
                 topmost().navigate({
                     moduleName: "subscriptions-home/subscriptions-home-page",
-                    backstackVisible: false,
                     clearHistory: true
                 });
             }
