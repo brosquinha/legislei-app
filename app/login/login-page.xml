@@ -8,12 +8,12 @@
 
     <StackLayout class="form">
         <StackLayout class="input-field">
-            <TextField class="input input-border" id="usernameField" autocorrect="false" hint="Username" text="{{ username }}" returnKeyType="next"/>
+            <TextField id="usernameField" autocorrect="false" hint="Username" text="{{ username }}" returnKeyType="next"/>
         </StackLayout>
 
         <StackLayout class="input-field">
-            <TextField secure="true" hint="Enter some text and click the button" id="passwordField" autocorrect="false" returnKeyType="done"
-                class="input input-border" text="{{ password }}"></TextField>
+            <TextField secure="true" hint="Password" id="passwordField" autocorrect="false" returnKeyType="done"
+                text="{{ password }}"></TextField>
         </StackLayout>
 
         <Button text="Enviar" tap="{{ onTap }}" class="btn btn-primary btn-active" />

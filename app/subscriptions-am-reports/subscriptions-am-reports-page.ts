@@ -3,49 +3,27 @@ import { Page } from "tns-core-modules/ui/page";
 import { Button } from "tns-core-modules/ui/button";
 import { topmost, goBack } from "tns-core-modules/ui/frame/frame";
 
-import { SecureStorage } from "nativescript-secure-storage";
-import { request } from "tns-core-modules/http";
-import * as applicationSettings from "tns-core-modules/application-settings";
+import { getAPI } from "../utils";
 
 export function onPageLoaded(args: EventData): void {
     const page = <Page>args.object;
-    const serverURI: String = applicationSettings.getString("serverURI");
-    const secureStorage = new SecureStorage();
-    const userToken = secureStorage.getSync({
-        key: "userToken",
-    });
     let context_info = page.navigationContext;
-    let reports = null;
-    request({
-        url: `https://legislei-stg.herokuapp.com/v1/relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`,
-        method: "GET",
-        headers: {
-            "Authorization": userToken,
-            "X-Fields": "id,data_inicial,data_final"
-        }
-    }).then((response) => {
-        let contentJSON = response.content.toJSON();
-        if (response.statusCode == 401) {
-            secureStorage.removeSync({
-                key: "userToken",
-            });
-            topmost().navigate({
-                moduleName: "login/login-page",
-                backstackVisible: false,
-            });
-        }
-        reports = contentJSON;
+    let reports = [];
+    let source = fromObject({
+        reports: reports,
+        isLoading: true,
+        assemblyman_name: context_info.assemblyman_name
+    })
+    page.bindingContext = source;
+    getAPI(`relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`, (data) => {
+        reports = data.content.toJSON();
         reports.forEach(report => {
             let finalDate = new Date(Date.parse(report.data_final));;
-            report.data_final_str = finalDate.toLocaleDateString() + "; ";
+            report.data_final_str = ("0" + finalDate.getDate()).slice(-2)  + "/" + ("0" + (finalDate.getMonth()+1)).slice(-2) + "/" + finalDate.getFullYear();
         });
-    
-        let source = fromObject({
-            reports: reports,
-            isLoading: false
-        })
-        page.bindingContext = source;
-    })
+        source.set("reports", reports)
+        source.set("isLoading", false)
+    });
 }
 
 export function goBackTo(args: EventData): void {

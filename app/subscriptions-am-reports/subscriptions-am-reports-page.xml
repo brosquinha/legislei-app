@@ -1,10 +1,14 @@
 <Page class="Page" loaded="onPageLoaded">
-    <ActionBar title="Relatórios disponíveis" class="action-bar"></ActionBar>
+    <ActionBar title="{{ 'Relatórios disponíveis | ' + assemblyman_name }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
 
-    <ActivityIndicator busy="{{ isLoading }}" />
-    <ListView row="0" items="{{ reports }}">
-        <ListView.itemTemplate>
-            <Button class="btn btn-primary" text="{{ data_final_str }}" />
-        </ListView.itemTemplate>
-    </ListView>
+    <StackLayout>
+        <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+        <ListView row="0" items="{{ reports }}">
+            <ListView.itemTemplate>
+                <Button class="btn btn-primary" text="{{ data_final_str }}" />
+            </ListView.itemTemplate>
+        </ListView>
+    </StackLayout>
 </Page>

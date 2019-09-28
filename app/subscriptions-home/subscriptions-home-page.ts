@@ -1,19 +1,12 @@
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { Page } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
+import { confirm } from "tns-core-modules/ui/dialogs";
 
-import { SecureStorage } from "nativescript-secure-storage";
-import { request } from "tns-core-modules/http";
-import * as applicationSettings from "tns-core-modules/application-settings";
+import { getAPI, ensure_login_decorator } from "../utils";
 
 export function onPageLoaded(args: EventData): void {
     const page = <Page>args.object;
-    const serverURI: String = applicationSettings.getString("serverURI");
-    const secureStorage = new SecureStorage();
-    const userToken = secureStorage.getSync({
-        key: "userToken",
-    });
-
     let source = fromObject({
         subscriptions: {
             parlamentares: [],
@@ -21,35 +14,45 @@ export function onPageLoaded(args: EventData): void {
         }
     })
     page.bindingContext = source;
-    request({
-        url: "https://legislei-stg.herokuapp.com/v1/usuarios/inscricoes",
-        method: "GET",
-        headers: {"Authorization": userToken}
-    }).then((response) => {
-        let contentJSON = response.content.toJSON();
-        if (response.statusCode == 401) {
-            secureStorage.removeSync({
-                key: "userToken",
-            });
-            topmost().navigate({
-                moduleName: "login/login-page",
-                backstackVisible: false,
-                clearHistory: true
-            });
-        }
-        source.set("subscriptions", contentJSON)
-    })
+    getAPI("usuarios/inscricoes", (data) => {
+        source.set("subscriptions", data.content.toJSON());
+    });
 }
 
 export function onCheckAssemblymanReports(args: EventData): void {
     const assemblyman_id = args.object.get("data-id")
     const assemblyman_house = args.object.get("data-house")
+    const assemblyman_name = args.object.get("data-name")
     topmost().navigate({
         moduleName: "subscriptions-am-reports/subscriptions-am-reports-page",
         backstackVisible: true,
         context: {
             assemblyman_id: assemblyman_id,
+            assemblyman_name: assemblyman_name,
             assemblyman_house: assemblyman_house
         }
+    });
+}
+
+export function confirmDelete(args: EventData): void {
+    confirm({
+        title: "Deletar inscrição",
+        message: "Tem certeza de que gostaria de deixar de seguir esse parlamentar?",
+        okButtonText: "Remover inscrição",
+        cancelButtonText: "Cancelar"
+    }).then(result => {
+        console.log(result ? "Deletar!" : "Nope");
+    });
+}
+
+export function confirmLogout(args: EventData): void {
+    confirm({
+        title: "Sair",
+        message: "Tem certeza de que gostaria de fazer logout?",
+        okButtonText: "Fazer logout",
+        cancelButtonText: "Cancelar"
+    }).then(result => {
+        if (result)
+        ensure_login_decorator({statusCode: 401}, null);
     });
 }

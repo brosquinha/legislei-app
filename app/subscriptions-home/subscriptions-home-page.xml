@@ -1,5 +1,8 @@
 <Page class="Page" loaded="onPageLoaded">
-    <ActionBar title="Minhas inscrições" class="action-bar"></ActionBar>
+    <ActionBar title="Minhas inscrições" class="action-bar">
+        <ActionItem text="Configurações" android.position="popup"></ActionItem>
+        <ActionItem text="Sair" android.position="popup" tap="confirmLogout"></ActionItem>
+    </ActionBar>
 
     <GridLayout rows="*, auto">
         <FlexboxLayout>
@@ -14,16 +17,17 @@
                                 text="Últimos relatórios"
                                 data-id="{{ id }}"
                                 data-house="{{ casa }}"
+                                data-name="{{ nome }}"
                                 onTap="onCheckAssemblymanReports" />
-                            <Button class="btn btn-outline btn-active" text="Deletar inscrição" />
+                            <Button class="btn btn-outline btn-active" text="Deletar inscrição" onTap="confirmDelete" />
                         </StackLayout>
-                        <Image col="1" src="{{ foto }}" height="200" stretch="aspectFit" />
+                        <Image col="1" src="{{ foto }}" height="200" stretch="aspectFit" loadMode="async" />
                     </GridLayout>
                 </ListView.itemTemplate>
             </ListView>
         </FlexboxLayout>
         <StackLayout horizontalAlignment="right" row="1">
-            <Button class="btn btn-primary btn-rounded-lg btn-active" text="+" />
+            <Button class="btn btn-primary btn-rounded-lg btn-active" style="background-color: #28a745" text="+" />
         </StackLayout>
     </GridLayout>
 </Page>
