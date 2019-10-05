@@ -23,11 +23,11 @@ export class LoginViewModel extends Observable {
     password: String = "";
     isLoading: boolean = false;
 
-    onTap(_args: EventData) {
+    async onTap(_args: EventData) {
         this.set("isLoading", true);
         const serverURI: String = applicationSettings.getString("serverURI");
         let secureStorage = new SecureStorage();
-        request({
+        return await request({
             url: "https://legislei-stg.herokuapp.com/v1/usuarios/token_acesso",
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -37,7 +37,6 @@ export class LoginViewModel extends Observable {
             })
         }).then((response) => {
             console.log(response);
-            this.set("isLoading", false);
             if (response.statusCode >= 400)
                 alert(response.content.toJSON().message);
             else {
@@ -51,6 +50,7 @@ export class LoginViewModel extends Observable {
                     clearHistory: true
                 });
             }
+            this.set("isLoading", false);
         }, (e) => {
             this.set("isLoading", false);
             console.log(e);

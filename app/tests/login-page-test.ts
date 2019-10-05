@@ -44,28 +44,22 @@ describe("LoginViewModel", function() {
     });
 
     describe("onTap", function() {
-        // this.timeout(0)
-        const delay = async (ms: number) => {return new Promise(resolve => setTimeout(resolve, ms))}
         it("should save token when login suceeds", async () => {
+            const secureStorage = new SecureStorage();
             const requireFake = sinon.fake.resolves({
                 statusCode: 200,
                 content: {toJSON: () => {return {token: "---userToken---"}}}
             });
-            console.info(httpr.request)
             sinon.replace(httpr, 'request', requireFake);
             sinon.replace(topmost(), 'navigate', sinon.fake());
             const navigateFake: any = topmost().navigate;
-            console.info(httpr.request)
-
+            
             let loginViewModel = new LoginViewModel();
             loginViewModel.username = "user";
             loginViewModel.password = "password";
-            loginViewModel.onTap(null);
+            await loginViewModel.onTap(null);
             
             assert.isTrue(requireFake.called);
-            assert.isTrue(loginViewModel.isLoading);
-            await delay(50);
-            const secureStorage = new SecureStorage();
             assert.equal(secureStorage.getSync({
                 key: "userToken",
             }), "---userToken---");
@@ -78,6 +72,7 @@ describe("LoginViewModel", function() {
         });
         
         it("when login fails", async () => {
+            const secureStorage = new SecureStorage();
             const requireFake = sinon.fake.resolves({
                 statusCode: 400,
                 content: {toJSON: () => {return {message: "Login failed"}}}
@@ -89,12 +84,9 @@ describe("LoginViewModel", function() {
             let loginViewModel = new LoginViewModel();
             loginViewModel.username = "user";
             loginViewModel.password = "password";
-            loginViewModel.onTap(null);
+            await loginViewModel.onTap(null);
             
             assert.isTrue(requireFake.called);
-            assert.isTrue(requireFake.called);
-            await delay(50);
-            const secureStorage = new SecureStorage();
             assert.isNull(secureStorage.getSync({
                 key: "userToken",
             }));
@@ -112,11 +104,9 @@ describe("LoginViewModel", function() {
             let loginViewModel = new LoginViewModel();
             loginViewModel.username = "user";
             loginViewModel.password = "password";
-            loginViewModel.onTap(null);
+            await loginViewModel.onTap(null);
             
             assert.isTrue(requireFake.called);
-            assert.isTrue(requireFake.called);
-            await delay(50);
             const secureStorage = new SecureStorage();
             assert.isNull(secureStorage.getSync({
                 key: "userToken",
