@@ -3,7 +3,6 @@ import { SecureStorage } from "nativescript-secure-storage";
 
 import { request } from "tns-core-modules/http";
 import * as applicationSettings from "tns-core-modules/application-settings";
-import { Button } from "tns-core-modules/ui/button/button";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 
 export class LoginViewModel extends Observable {
@@ -22,8 +21,10 @@ export class LoginViewModel extends Observable {
 
     username: String = "";
     password: String = "";
+    isLoading: boolean = false;
 
-    onTap(args: EventData) {
+    onTap(_args: EventData) {
+        this.set("isLoading", true);
         const serverURI: String = applicationSettings.getString("serverURI");
         let secureStorage = new SecureStorage();
         request({
@@ -36,6 +37,7 @@ export class LoginViewModel extends Observable {
             })
         }).then((response) => {
             console.log(response);
+            this.set("isLoading", false);
             if (response.statusCode >= 400)
                 alert(response.content.toJSON().message);
             else {
@@ -50,6 +52,7 @@ export class LoginViewModel extends Observable {
                 });
             }
         }, (e) => {
+            this.set("isLoading", false);
             console.log(e);
             alert(e.message);
         });

@@ -16,6 +16,9 @@
                 text="{{ password }}"></TextField>
         </StackLayout>
 
-        <Button text="Enviar" tap="{{ onTap }}" class="btn btn-primary btn-active" />
+        <StackLayout>
+            <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+            <Button visibility="{{ (isLoading) ? 'collapsed' : 'visible' }}" text="Enviar" tap="{{ onTap }}" class="btn btn-primary btn-active" />
+        </StackLayout>
     </StackLayout>
 </Page>
