@@ -5,7 +5,7 @@ import { topmost, goBack } from "tns-core-modules/ui/frame/frame";
 
 import { getAPI } from "../utils";
 
-export function onPageLoaded(args: EventData): void {
+export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
     let context_info = page.navigationContext;
     let reports = [];
@@ -15,7 +15,7 @@ export function onPageLoaded(args: EventData): void {
         assemblyman_name: context_info.assemblyman_name
     })
     page.bindingContext = source;
-    getAPI(`relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`, (data) => {
+    return await getAPI(`relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`, (data) => {
         reports = data.content.toJSON();
         reports.forEach(report => {
             let finalDate = new Date(Date.parse(report.data_final));;

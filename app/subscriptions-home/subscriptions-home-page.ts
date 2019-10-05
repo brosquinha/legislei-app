@@ -5,7 +5,7 @@ import { confirm } from "tns-core-modules/ui/dialogs";
 
 import { getAPI, ensureLoginDecorator } from "../utils";
 
-export function onPageLoaded(args: EventData): void {
+export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
     let source = fromObject({
         subscriptions: {
@@ -14,7 +14,7 @@ export function onPageLoaded(args: EventData): void {
         }
     })
     page.bindingContext = source;
-    getAPI("usuarios/inscricoes", (data) => {
+    return await getAPI("usuarios/inscricoes", (data) => {
         source.set("subscriptions", data.content.toJSON());
     });
 }
@@ -34,8 +34,8 @@ export function onCheckAssemblymanReports(args: EventData): void {
     });
 }
 
-export function confirmDelete(args: EventData): void {
-    confirm({
+export async function confirmDelete(args: EventData) {
+    return await confirm({
         title: "Deletar inscrição",
         message: "Tem certeza de que gostaria de deixar de seguir esse parlamentar?",
         okButtonText: "Remover inscrição",
@@ -45,14 +45,14 @@ export function confirmDelete(args: EventData): void {
     });
 }
 
-export function confirmLogout(args: EventData): void {
-    confirm({
+export async function confirmLogout(args: EventData) {
+    return await confirm({
         title: "Sair",
         message: "Tem certeza de que gostaria de fazer logout?",
         okButtonText: "Fazer logout",
         cancelButtonText: "Cancelar"
     }).then(result => {
         if (result)
-        ensureLoginDecorator({statusCode: 401}, null);
+            ensureLoginDecorator({statusCode: 401}, null);
     });
 }

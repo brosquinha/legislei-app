@@ -2,10 +2,9 @@ import { topmost } from "tns-core-modules/ui/frame/frame";
 import * as httpr from "tns-core-modules/http";
 
 import { SecureStorage } from "nativescript-secure-storage";
+import * as sinon from "sinon";
 
 import { LoginViewModel } from "../login/login-view-model";
-
-const sinon = require('sinon');
 
 describe("LoginViewModel", function() {
     beforeEach(function() {
