@@ -44,3 +44,29 @@ describe("onPageLoaded", function() {
         sinon.restore();
     });
 });
+
+describe("goToReportPage", function() {
+    it("should go to report page with reportId", function() {
+        const reportId = "14";
+        const fakePage: Observable = fromObject({
+            "data-id": reportId
+        });
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+        
+        reportsPage.goToReportPage(fakeEvent);
+        
+        assert.isTrue(navigateFake.calledWithMatch({
+            moduleName: "report/report-page",
+            backstackVisible: true,
+            context: {
+                reportId: reportId
+            }
+        }));
+        sinon.restore();
+    });
+});

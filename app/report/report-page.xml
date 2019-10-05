@@ -1,0 +1,91 @@
+<Page class="Page" loaded="loadReport">
+    <ActionBar title="{{ title }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <ActivityIndicator busy="{{ report === null }}" height="{{ (report === null) ? 100 : 0 }}" />
+    <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}">
+        <TabViewItem title="Geral">
+            <StackLayout>
+                <Label class="h2 text-center" text="Informações sobre parlamentar"></Label>
+                <StackLayout orientation="horizontal">
+                <!-- <GridLayout columns="2*, *" margin="3"> -->
+                    <Image horizontalAlignment="right" src="{{ report.parlamentar.foto }}" height="150" stretch="aspectFit" loadMode="async" />
+                    <StackLayout horizontalAlignment="left">
+                        <Label class="h3" text="{{ report.parlamentar.nome }}"></Label>
+                        <Label class="h3" text="{{ report.parlamentar.partido + ' - '+ report.parlamentar.uf }}"></Label>
+                        <Label class="h3" text="{{ formatHouse(report.parlamentar.casa) }}"></Label>
+                    </StackLayout>
+                </StackLayout>
+                <!-- </GridLayout> -->
+                <Label class="h2 text-center" text="Órgãos que esse parlamentar faz parte"></Label>
+                <ListView items="{{ report.orgaos }}">
+                    <ListView.itemTemplate>
+                        <StackLayout>
+                            <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ cargo }}" class="m-15 text-left"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Proposições">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem proposições nesse período"
+                    visibility="{{ (!report.proposicoes.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.proposicoes }}" height="auto">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">
+                            <Label text="{{ tipo + '-' + numero }}" class="m-5 h3"></Label>
+                            <Label text="{{ ementa }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Eventos presentes">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem eventos presentes nesse período"
+                    visibility="{{ (!report.eventos_presentes.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.eventos_presentes }}">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showEventDetails" data-id="{{ id }}">
+                            <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ (pautas.length) ? 'Clique para mais informações' : 'Evento sem pauta' }}" class="m-5" textWrap="true"></Label>
+                            <Repeater items="{{ pautas }}" visibility="{{ (isVisible) ? 'visible' : 'collapsed' }}">
+                                <Repeater.itemTemplate>
+                                    <StackLayout>
+                                        <Label text="{{ pauta }}" class="m-5 h4"></Label>
+                                        <Label text="{{ voto }}" class="m-5" textWrap="true"></Label>
+                                    </StackLayout>
+                                </Repeater.itemTemplate>
+                            </Repeater>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Eventos ausentes">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem eventos ausentes nesse período"
+                    visibility="{{ (!report.eventos_ausentes.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.eventos_ausentes }}">
+                    <ListView.itemTemplate>
+                        <StackLayout>
+                            <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+    </TabView>
+</Page>

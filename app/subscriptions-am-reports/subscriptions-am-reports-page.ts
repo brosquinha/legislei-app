@@ -18,7 +18,7 @@ export async function onPageLoaded(args: EventData) {
     return await getAPI(`relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`, (data) => {
         reports = data.content.toJSON();
         reports.forEach(report => {
-            let finalDate = new Date(Date.parse(report.data_final));;
+            let finalDate = new Date(Date.parse(report.data_final));
             report.data_final_str = ("0" + finalDate.getDate()).slice(-2)  + "/" + ("0" + (finalDate.getMonth()+1)).slice(-2) + "/" + finalDate.getFullYear();
         });
         source.set("reports", reports)
@@ -28,4 +28,14 @@ export async function onPageLoaded(args: EventData) {
 
 export function goBackTo(args: EventData): void {
     topmost().goBack();
+}
+
+export function goToReportPage(args: EventData): void {
+    topmost().navigate({
+        moduleName: "report/report-page",
+        backstackVisible: true,
+        context: {
+            reportId: args.object.get("data-id")
+        }
+    });
 }

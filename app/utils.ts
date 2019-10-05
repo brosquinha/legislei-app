@@ -1,4 +1,4 @@
-import { topmost } from "tns-core-modules/ui/frame/frame";
+import { topmost, EventData } from "tns-core-modules/ui/frame/frame";
 
 import { SecureStorage } from "nativescript-secure-storage";
 import { request, HttpResponse } from "tns-core-modules/http";
@@ -42,4 +42,12 @@ export function ensureLoginDecorator(response: any, callback: any) {
     }
     else
         callback(response);
+}
+
+export function formatHouse(house: string): string {
+    if (house == "BR1" || house == "BR2")
+        return "deputado federal";
+    else if (house.length == 2)
+        return "deputado estadual";
+    return "vereador";
 }

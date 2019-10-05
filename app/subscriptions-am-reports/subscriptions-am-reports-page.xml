@@ -7,7 +7,11 @@
         <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
         <ListView row="0" items="{{ reports }}">
             <ListView.itemTemplate>
-                <Button class="btn btn-primary" text="{{ data_final_str }}" />
+                <Button
+                    class="btn btn-primary"
+                    text="{{ data_final_str }}"
+                    data-id="{{ id }}"
+                    onTap="goToReportPage" />
             </ListView.itemTemplate>
         </ListView>
     </StackLayout>
