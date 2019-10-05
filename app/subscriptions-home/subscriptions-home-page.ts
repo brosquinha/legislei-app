@@ -3,7 +3,7 @@ import { Page } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
-import { getAPI, ensure_login_decorator } from "../utils";
+import { getAPI, ensureLoginDecorator } from "../utils";
 
 export function onPageLoaded(args: EventData): void {
     const page = <Page>args.object;
@@ -53,6 +53,6 @@ export function confirmLogout(args: EventData): void {
         cancelButtonText: "Cancelar"
     }).then(result => {
         if (result)
-        ensure_login_decorator({statusCode: 401}, null);
+        ensureLoginDecorator({statusCode: 401}, null);
     });
 }

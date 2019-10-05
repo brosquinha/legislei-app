@@ -8,10 +8,13 @@ import { LoginViewModel } from "../login/login-view-model";
 const sinon = require('sinon');
 
 describe("LoginViewModel", function() {
-    afterEach(function() {
-        sinon.verifyAndRestore();
+    beforeEach(function() {
         const secureStorage = new SecureStorage();
         secureStorage.removeAllSync();
+    })
+    
+    afterEach(function() {
+        sinon.verifyAndRestore();
     });
 
     describe("constructor", function() {
@@ -71,7 +74,7 @@ describe("LoginViewModel", function() {
             sinon.restore();
         });
         
-        it("when login fails", async () => {
+        it("should not create userToken when login fails", async () => {
             const secureStorage = new SecureStorage();
             const requireFake = sinon.fake.resolves({
                 statusCode: 400,
@@ -95,7 +98,7 @@ describe("LoginViewModel", function() {
             sinon.restore();
         });
         
-        it("when API timeouts", async () => {
+        it("should not create userToken when API timeouts", async () => {
             const requireFake = sinon.fake.rejects("Gateway timeouted");
             sinon.replace(httpr, 'request', requireFake);
             sinon.replace(topmost(), 'navigate', sinon.fake());
