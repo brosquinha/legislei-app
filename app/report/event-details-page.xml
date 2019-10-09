@@ -1,0 +1,23 @@
+<Page class="Page" loaded="loadEvent">
+    <ActionBar title="{{ 'Detalhes de evento ' + event.nome }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+    <StackLayout>
+        <StackLayout orientation="horizontal">
+            <StackLayout>
+                <Label text="{{ event.nome }}" class="m-5 h2"></Label>
+                <Label text="{{ event.situacao }}" class="m-5" textWrap="true"></Label>
+                <Label text="{{ event.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+            </StackLayout>
+            <Button text="Avaliar" onTap="rateEvent" horizontalAlignment="right" class="btn btn-outline btn-active" />
+        </StackLayout>
+        <ListView items="{{ event.pautas }}">
+            <ListView.itemTemplate>
+                <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">
+                    <Label text="{{ pauta }}" class="m-5 h3" textWrap="true"></Label>
+                    <Label text="{{ (voto == 'ERROR') ? 'Sem informações de voto' : voto }}" class="m-5" textWrap="true"></Label>
+                </StackLayout>
+            </ListView.itemTemplate>
+        </ListView>
+    </StackLayout>
+</Page>

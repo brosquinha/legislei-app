@@ -5,20 +5,23 @@
 
     <ActivityIndicator busy="{{ report === null }}" height="{{ (report === null) ? 100 : 0 }}" />
     <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}">
-        <TabViewItem title="Geral">
+        <TabViewItem title="Parlamentar">
             <StackLayout>
-                <Label class="h2 text-center" text="Informações sobre parlamentar"></Label>
-                <StackLayout orientation="horizontal">
-                <!-- <GridLayout columns="2*, *" margin="3"> -->
-                    <Image horizontalAlignment="right" src="{{ report.parlamentar.foto }}" height="150" stretch="aspectFit" loadMode="async" />
-                    <StackLayout horizontalAlignment="left">
-                        <Label class="h3" text="{{ report.parlamentar.nome }}"></Label>
-                        <Label class="h3" text="{{ report.parlamentar.partido + ' - '+ report.parlamentar.uf }}"></Label>
-                        <Label class="h3" text="{{ formatHouse(report.parlamentar.casa) }}"></Label>
+                <!-- <StackLayout orientation="horizontal"> -->
+                <GridLayout columns="*, *" margin="3" verticalAlignment="top">
+                    <Image col="0" src="{{ report.parlamentar.foto }}" height="150" stretch="aspectFit" loadMode="async" />
+                    <StackLayout col="1">
+                        <Label class="h3 m-5" text="{{ report.parlamentar.nome }}"></Label>
+                        <Label class="h3 m-5" text="{{ report.parlamentar.partido + ' - '+ report.parlamentar.uf }}"></Label>
+                        <Label class="h3 m-5" text="{{ formatHouse(report.parlamentar.casa) }}"></Label>
+                        <Label class="h3 m-5" text="{{ 'Presença: ' + report.presenca_relativa }}"></Label>
                     </StackLayout>
-                </StackLayout>
-                <!-- </GridLayout> -->
-                <Label class="h2 text-center" text="Órgãos que esse parlamentar faz parte"></Label>
+                <!-- </StackLayout> -->
+                </GridLayout>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Órgãos">
+            <StackLayout>
                 <ListView items="{{ report.orgaos }}">
                     <ListView.itemTemplate>
                         <StackLayout>
@@ -58,14 +61,6 @@
                             <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ (pautas.length) ? 'Clique para mais informações' : 'Evento sem pauta' }}" class="m-5" textWrap="true"></Label>
-                            <Repeater items="{{ pautas }}" visibility="{{ (isVisible) ? 'visible' : 'collapsed' }}">
-                                <Repeater.itemTemplate>
-                                    <StackLayout>
-                                        <Label text="{{ pauta }}" class="m-5 h4"></Label>
-                                        <Label text="{{ voto }}" class="m-5" textWrap="true"></Label>
-                                    </StackLayout>
-                                </Repeater.itemTemplate>
-                            </Repeater>
                         </StackLayout>
                     </ListView.itemTemplate>
                 </ListView>
@@ -76,8 +71,8 @@
                 <Label
                     class="h2 text-center m-15"
                     text="Sem eventos ausentes nesse período"
-                    visibility="{{ (!report.eventos_ausentes.length) ? 'visible' : 'collapsed' }}"></Label>
-                <ListView items="{{ report.eventos_ausentes }}">
+                    visibility="{{ (!report.eventos_ausentes_filtered.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.eventos_ausentes_filtered }}" style="height:90%">
                     <ListView.itemTemplate>
                         <StackLayout>
                             <Label text="{{ nome }}" class="m-5 h3"></Label>
@@ -85,6 +80,11 @@
                         </StackLayout>
                     </ListView.itemTemplate>
                 </ListView>
+                <Label
+                    class="h3 text-center m-15"
+                    text="Ver demais eventos da semana"
+                    visibility="{{ (report.eventos_ausentes_filtered.length) ? 'visible' : 'collapsed' }}"
+                    onTap="listAllEvents"></Label>
             </StackLayout>
         </TabViewItem>
     </TabView>
