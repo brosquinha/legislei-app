@@ -1,9 +1,11 @@
-import { getAPI, formatHouse } from "../utils";
+import { getAPI, formatHouse, postAPI } from "../utils";
 import { EventData, Page } from "tns-core-modules/ui/page/page";
 import { fromObject, Observable } from "tns-core-modules/data/observable/observable";
 import * as utils from "tns-core-modules/utils/utils";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { alert, action } from "tns-core-modules/ui/dialogs";
+
+let reportId: string;
 
 export async function loadReport(args: EventData) {
     const page = <Page>args.object;
@@ -16,6 +18,7 @@ export async function loadReport(args: EventData) {
     page.bindingContext = source;
     return await getAPI(`relatorios/${context_info.reportId}`, (data) => {
         const report = data.content.toJSON();
+        reportId = report.id;
         report.eventos_ausentes_filtered = report.eventos_ausentes.filter((e) => e.presenca != 'Ausência esperada');
         const initialDate = new Date(Date.parse(report.data_inicial))
         const finalDate = new Date(Date.parse(report.data_final))
@@ -47,9 +50,24 @@ export async function rateItem(reportItem: any) {
         message: "O que você achou dessa ação do parlamentar?",
         actions: ["Ótima", "Boa", "Ruim", "Péssima"],
     }).then((rating) => {
-        // TODO chamada à API para salvar avaliação
-        if (rating)
-            alert(`You chose ${rating} for ${reportItem.id}`)
+        const ratingValue = {
+            "Ótima": "2",
+            "Boa": "1",
+            "Ruim": "-1",
+            "Péssima": "-2"
+        }
+        if (ratingValue[rating] === undefined)
+            return;
+        postAPI(`relatorios/${reportId}/avaliacoes`, {
+            item_id: reportItem.id,
+            avaliacao: ratingValue[rating]
+        }, (response) => {
+            if (response.statusCode == 201)
+                alert(`Item avaliado como "${rating}"`)
+            else {
+                alert(`Ocorreu o seguinte erro: ${response.content.toJSON().message}`)
+            }
+        })
     })
 }
 

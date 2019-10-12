@@ -26,6 +26,23 @@ export async function getAPI(path: string, callback: any): Promise<void> {
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
+export async function postAPI(path: string, body: object, callback: any): Promise<void> {
+    const serverURI: String = applicationSettings.getString("serverURI");
+    const secureStorage = new SecureStorage();
+    const userToken = secureStorage.getSync({
+        key: "userToken",
+    });
+    return await request({
+        url: `https://legislei-stg.herokuapp.com/v1/${path}`,
+        method: "POST",
+        content: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": userToken,
+        }
+    }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
+}
+
 export function ensureLoginDecorator(response: any, callback: any) {
     const secureStorage = new SecureStorage();
     const userToken = secureStorage.getSync({

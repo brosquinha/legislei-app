@@ -97,13 +97,71 @@ describe("openProposition", function() {
 
 describe("rateItem", function() {
     it("should rate item with chosen user rate", async () => {
+        const requireFake = sinon.fake.resolves({
+            statusCode: 201,
+            content: {toJSON: () => {return {}}}
+        });
+        sinon.replace(httpr, 'request', requireFake);
         const fakeAction = sinon.fake.resolves("Boa");
         sinon.replace(dialogs, "action", fakeAction);
+        const fakeAlert = sinon.fake();
+        sinon.replace(dialogs, "alert", fakeAlert);
 
-        await report.rateItem({id: "123"});
+        try {
+            await report.rateItem({id: "123"});
 
-        assert.isTrue(fakeAction.called);
+            assert.isTrue(fakeAction.called);
+            assert.isTrue(requireFake.called);
+            assert.isTrue(fakeAlert.calledWith("Item avaliado como \"Boa\""));
+        } catch(e) {
+            sinon.restore();
+            throw e;
+        }
+        sinon.restore();
+    });
 
+    it("should present with an alert when API fails", async () => {
+        const requireFake = sinon.fake.resolves({
+            statusCode: 400,
+            content: {toJSON: () => {return {message: "validation error"}}}
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakeAction = sinon.fake.resolves("Boa");
+        sinon.replace(dialogs, "action", fakeAction);
+        const fakeAlert = sinon.fake();
+        sinon.replace(dialogs, "alert", fakeAlert);
+
+        try {
+            await report.rateItem({id: "123"});
+
+            assert.isTrue(fakeAction.called);
+            assert.isTrue(requireFake.called);
+            assert.isTrue(fakeAlert.calledWith("Ocorreu o seguinte erro: validation error"));
+        } catch(e) {
+            sinon.restore();
+            throw e;
+        }
+        sinon.restore();
+    });
+
+    it("should do nothing if user cancels", async () => {
+        const requireFake = sinon.fake();
+        sinon.replace(httpr, 'request', requireFake);
+        const fakeAction = sinon.fake.resolves("");
+        sinon.replace(dialogs, "action", fakeAction);
+        const fakeAlert = sinon.fake();
+        sinon.replace(dialogs, "alert", fakeAlert);
+
+        try {
+            await report.rateItem({id: "123"});
+
+            assert.isTrue(fakeAction.called);
+            assert.isFalse(requireFake.called);
+            assert.isFalse(fakeAlert.called);
+        } catch(e) {
+            sinon.restore();
+            throw e;
+        }
         sinon.restore();
     });
 });

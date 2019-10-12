@@ -3,14 +3,14 @@
         <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
     </ActionBar>
     <StackLayout>
-        <StackLayout orientation="horizontal">
-            <StackLayout>
+        <GridLayout columns="2*, *" margin="3" height="100">
+            <StackLayout col="0">
                 <Label text="{{ event.nome }}" class="m-5 h2"></Label>
                 <Label text="{{ event.situacao }}" class="m-5" textWrap="true"></Label>
                 <Label text="{{ event.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
             </StackLayout>
-            <Button text="Avaliar" onTap="rateEvent" horizontalAlignment="right" class="btn btn-outline btn-active" />
-        </StackLayout>
+            <Button col="1" text="Avaliar" onTap="rateEvent" horizontalAlignment="right" class="btn btn-outline btn-active" />
+        </GridLayout>
         <ListView items="{{ event.pautas }}">
             <ListView.itemTemplate>
                 <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">

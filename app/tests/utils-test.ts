@@ -6,7 +6,7 @@ import * as sinon from "sinon";
 
 import * as utils from "../utils";
 
-describe("utils", function() {
+describe("getAPI", function() {
     it("should call ensureLoginDecorator when HTTP request suceeds", async () => {
         const secureStorage = new SecureStorage();
         secureStorage.setSync({
@@ -57,4 +57,57 @@ describe("utils", function() {
         }));
         sinon.restore();
     });
-})
+});
+
+describe("postAPI", function() {
+    it("should call API with POST request", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 201,
+            content: {toJSON: () => {return {message: "Ok"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        const callback = sinon.fake();
+
+        await utils.postAPI("/test", {test: "testing"}, callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isTrue(callback.called);
+        sinon.restore();
+    });
+
+    it("should remove userToken when API responds with 401", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 401,
+            content: {toJSON: () => {return {message: "Unauthorized"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+        const callback = sinon.fake();
+
+        await utils.postAPI("/test", {test: "testing"}, callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isFalse(callback.called);
+        assert.isNull(secureStorage.getSync({
+            key: "userToken",
+        }));
+        assert.isTrue(navigateFake.calledWithMatch({
+            moduleName: "login/login-page",
+            clearHistory: true
+        }));
+        sinon.restore();
+    });
+});
