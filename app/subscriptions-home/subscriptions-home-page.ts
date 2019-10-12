@@ -3,7 +3,9 @@ import { Page } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
-import { getAPI, ensureLoginDecorator } from "../utils";
+import { getAPI, ensureLoginDecorator, subscribeToPushNotifications } from "../utils";
+
+const notif = subscribeToPushNotifications();
 
 export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;

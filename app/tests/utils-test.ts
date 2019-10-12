@@ -1,7 +1,9 @@
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import * as httpr from "tns-core-modules/http";
+import * as dialog from "tns-core-modules/ui/dialogs";
 
 import { SecureStorage } from "nativescript-secure-storage";
+import { messaging, Message } from "nativescript-plugin-firebase/messaging";
 import * as sinon from "sinon";
 
 import * as utils from "../utils";
@@ -108,6 +110,84 @@ describe("postAPI", function() {
             moduleName: "login/login-page",
             clearHistory: true
         }));
+        sinon.restore();
+    });
+});
+
+describe("onMessageReceivedCallback", function() {
+    this.timeout(3000);
+    it("should go to reports overview page after 1 sec if notification on background", async () => {
+        const sleep = (ms: number) => {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        const reportsInfoFake = [1, 2, 3];
+        const messageFake: Message = {
+            title: "I'm fake",
+            body: "I'm not real",
+            data: {reports: JSON.stringify(reportsInfoFake)},
+            foreground: false
+        }
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+
+        try {
+            await utils.receiveNotification(messageFake);
+            await sleep(1000);
+
+            assert.isTrue(navigateFake.calledWithMatch({
+                moduleName: "reports-overview/reports-overview-page",
+                context: reportsInfoFake
+            }));
+        } catch(e) {
+            sinon.restore();
+            throw e;
+        }
+
+        sinon.restore();
+    });
+
+    it("should go to reports overview page if notification on foreground and user confirms", async () => {
+        const reportsInfoFake = [1, 2, 3];
+        const messageFake: Message = {
+            title: "I'm fake",
+            body: "I'm not real",
+            data: {reports: JSON.stringify(reportsInfoFake)},
+            foreground: true
+        }
+        const confirmFake = sinon.fake.resolves(true);
+        sinon.replace(dialog, "confirm", confirmFake);
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+
+        await utils.receiveNotification(messageFake);
+
+        assert.isTrue(confirmFake.called);
+        assert.isTrue(navigateFake.calledWithMatch({
+            moduleName: "reports-overview/reports-overview-page",
+            context: reportsInfoFake
+        }));
+
+        sinon.restore();
+    });
+
+    it("should do nothing if notification in foreground and user cancels confirm", async () => {
+        const reportsInfoFake = [1, 2, 3];
+        const messageFake: Message = {
+            title: "I'm fake",
+            body: "I'm not real",
+            data: {reports: JSON.stringify(reportsInfoFake)},
+            foreground: true
+        }
+        const confirmFake = sinon.fake.resolves(false);
+        sinon.replace(dialog, "confirm", confirmFake);
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+
+        await utils.receiveNotification(messageFake);
+
+        assert.isTrue(confirmFake.called);
+        assert.isFalse(navigateFake.called);
+
         sinon.restore();
     });
 });

@@ -6,6 +6,9 @@ purpose of the file is to pass control to the app’s first module.
 
 import * as app from "tns-core-modules/application";
 
+//added this here so we can do some wiring -- without this, you won're receive a push token on iOS
+require("nativescript-plugin-firebase");
+
 app.run({ moduleName: "app-root" });
 
 /*

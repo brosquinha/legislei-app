@@ -1,0 +1,26 @@
+<Page class="Page" loaded="onPageLoaded">
+    <ActionBar title="Seus relatórios do período" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <StackLayout>
+        <ListView row="0" items="{{ reports }}">
+            <ListView.itemTemplate>
+                <GridLayout columns="2*, *" margin="3">
+                    <StackLayout col="0">
+                        <Label class="m-l-5 h2" text="{{ parlamentar.nome + ' (' + parlamentar.partido +')' }}" />
+                        <Label class="m-l-15" text="{{ 'Fez ' + proposicoes + ' proposições' }}" />
+                        <Label class="m-l-15" text="{{ 'Compareceu a ' + eventos_presentes + ' eventos' }}" />
+                        <Label class="m-l-15" text="{{ 'Ausentou-se de ' + eventos_previstos + ' eventos previstos' }}" />
+                        <Button
+                            class="btn btn-primary btn-active"
+                            text="Ver relatório"
+                            data-id="{{ id }}"
+                            onTap="goToReportPage" />
+                    </StackLayout>
+                    <Image col="1" src="{{ parlamentar.foto }}" height="200" stretch="aspectFit" loadMode="async" />
+                </GridLayout>
+            </ListView.itemTemplate>
+        </ListView>
+    </StackLayout>
+</Page>

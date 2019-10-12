@@ -3,6 +3,8 @@ import { topmost, EventData } from "tns-core-modules/ui/frame/frame";
 import { SecureStorage } from "nativescript-secure-storage";
 import { request, HttpResponse } from "tns-core-modules/http";
 import * as applicationSettings from "tns-core-modules/application-settings";
+import { messaging, Message } from "nativescript-plugin-firebase/messaging";
+import { confirm } from "tns-core-modules/ui/dialogs";
 
 /**
  * Makes a GET request to Legislei REST API
@@ -67,4 +69,47 @@ export function formatHouse(house: string): string {
     else if (house.length == 2)
         return "deputado estadual";
     return "vereador";
+}
+
+export async function receiveNotification(message: Message) {
+    const goToReportOverview = () => {
+        const reportsInfo = JSON.parse(message.data.reports);
+        topmost().navigate({
+            moduleName: "reports-overview/reports-overview-page",
+            context: reportsInfo
+        });
+    };
+    console.log(message);
+    if (message.foreground) {
+        await confirm({
+            title: message.title,
+            message: message.body,
+            okButtonText: "Ver relatórios",
+            cancelButtonText: "Depois",
+            neutralButtonText: "Cancelar"
+        }).then((result) => {
+            if (result) {
+                return goToReportOverview();
+            }
+        });
+    } else {
+        return setTimeout(goToReportOverview, 1000);
+    }
+}
+
+export function subscribeToPushNotifications() {
+    console.log("Subscribing to good stuff...")
+    messaging.registerForPushNotifications({
+        onPushTokenReceivedCallback: (token: string): void => {
+            console.log("Firebase plugin received a push token: " + token);
+        },
+    
+        onMessageReceivedCallback: receiveNotification,
+        
+        // Whether you want this plugin to automatically display the notifications or just notify the callback. Currently used on iOS only. Default true.
+        showNotifications: true,
+        
+        // Whether you want this plugin to always handle the notifications when the app is in foreground. Currently used on iOS only. Default false.
+        showNotificationsWhenInForeground: true
+    }).then(() => console.log("Registered for push"));
 }
