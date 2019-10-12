@@ -17,7 +17,6 @@ export async function loadReport(args: EventData) {
     return await getAPI(`relatorios/${context_info.reportId}`, (data) => {
         const report = data.content.toJSON();
         report.eventos_ausentes_filtered = report.eventos_ausentes.filter((e) => e.presenca != 'Ausência esperada');
-        console.log(report.eventos_ausentes_filtered.length)
         const initialDate = new Date(Date.parse(report.data_inicial))
         const finalDate = new Date(Date.parse(report.data_final))
         const formattedInitialDate = ("0" + initialDate.getDate()).slice(-2)  + "/" + ("0" + (initialDate.getMonth()+1)).slice(-2) + "/" + initialDate.getFullYear();
@@ -27,10 +26,10 @@ export async function loadReport(args: EventData) {
     });
 }
 
-export function openProposition(args: EventData) {
+export async function openProposition(args: EventData) {
     const page = <Page>args.object;
     const proposition = page.bindingContext;
-    action({
+    return await action({
         title: "Opções proposição",
         actions: ["Abrir URL", "Avaliar"],
     }).then((result) => {
@@ -42,8 +41,8 @@ export function openProposition(args: EventData) {
     })
 }
 
-export function rateItem(reportItem: any) {
-    action({
+export async function rateItem(reportItem: any) {
+    return await action({
         title: "Avaliar item de relatório",
         message: "O que você achou dessa ação do parlamentar?",
         actions: ["Ótima", "Boa", "Ruim", "Péssima"],
