@@ -8,7 +8,6 @@ import { getAPI } from "../utils";
 export function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
     let context_info = page.navigationContext;
-    let reports = [];
     let source = fromObject({
         reports: context_info,
     })
