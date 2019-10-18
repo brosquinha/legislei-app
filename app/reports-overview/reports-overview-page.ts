@@ -11,6 +11,7 @@ export async function onPageLoaded(args: EventData) {
     if (context_info.reports) {
         const source = fromObject({
             reports: context_info.reports,
+            alternativeFails: 0,
             isLoading: false
         })
         page.bindingContext = source;
@@ -18,15 +19,17 @@ export async function onPageLoaded(args: EventData) {
     } else {
         const source = fromObject({
             reports: [],
+            alternativeFails: 0,
             isLoading: true
         })
         page.bindingContext = source;
         const reportsView: any = page.getViewById("reportsView");
-        const reports = await getReportsInfos(context_info.reportsIds);
-        source.set("reports", reports);
+        const reportsInfos = await getReportsInfos(context_info.reportsIds);
+        source.set("reports", reportsInfos.reports);
+        source.set("alternativeFails", reportsInfos.fails);
         source.set("isLoading", false);
         reportsView.refresh();
-        return reports;
+        return reportsInfos;
     }
 }
 

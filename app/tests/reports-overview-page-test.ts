@@ -72,16 +72,23 @@ describe("onPageLoaded", function() {
             "5d0bba74c7d37e000331e139",
         ]
         const fakeReportSubscriptions = {
-            parlamentares: [{
-                "nome": "GLEISI HOFFMANN",
-                "partido": "PT",
-                "uf": "SP",
-                "foto": "https://www.camara.leg.br/internet/deputado/bandep/107283.jpg"
-            }],
-            parlamentar: {id: "123"}
+            id: "14",
+            orgaos: [1, 2, 3],
+            proposicoes: [1, 2],
+            eventos_presentes: [1],
+            eventos_previstos: [1 ,2],
+            eventos_ausentes: [1, 2, 3]
         };
+        const fakeReportResult = {
+            _id: "14",
+            orgaos: 3,
+            proposicoes: 2,
+            eventosPresentes: 1,
+            eventosPrevistos: 2,
+            eventosAusentes: 3
+        }
         const requireFakeResponse = {
-            statusCode: 401,
+            statusCode: 200,
             content: {toJSON: () => {return fakeReportSubscriptions}}
  
         }
@@ -100,9 +107,11 @@ describe("onPageLoaded", function() {
             object: fakePage
         };
 
-        await reportsOverview.onPageLoaded(fakeEvent);
+        const reportsInfos = await reportsOverview.onPageLoaded(fakeEvent);
 
-        assert.equal(requireFake.callCount, 4);
+        assert.equal(requireFake.callCount, 3);
+        assert.equal(reportsInfos.reports.length, 3);
+        assert.equal(reportsInfos.fails, 1);
         sinon.restore();
     });
 });

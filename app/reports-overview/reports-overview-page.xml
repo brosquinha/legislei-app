@@ -5,7 +5,8 @@
 
     <StackLayout>
         <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
-        <ListView row="0" items="{{ reports }}" id="reportsView">
+        <Label class="m-15 text-danger" text="{{ alternativeFails + ' relatório(s) não puderam(pôde) ser obtido(s)'}}" visibility="{{ (alternativeFails) ? 'visible' : 'collapsed' }}" /> -->
+        <ListView items="{{ reports }}" id="reportsView" height="auto">
             <ListView.itemTemplate>
                 <GridLayout columns="2*, *" margin="3">
                     <StackLayout col="0">
