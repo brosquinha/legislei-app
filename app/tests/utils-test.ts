@@ -136,7 +136,7 @@ describe("onMessageReceivedCallback", function() {
 
             assert.isTrue(navigateFake.calledWithMatch({
                 moduleName: "reports-overview/reports-overview-page",
-                context: reportsInfoFake
+                context: {reports: reportsInfoFake, reportsIds: null}
             }));
         } catch(e) {
             sinon.restore();
@@ -164,7 +164,7 @@ describe("onMessageReceivedCallback", function() {
         assert.isTrue(confirmFake.called);
         assert.isTrue(navigateFake.calledWithMatch({
             moduleName: "reports-overview/reports-overview-page",
-            context: reportsInfoFake
+            context: {reports: reportsInfoFake, reportsIds: null}
         }));
 
         sinon.restore();

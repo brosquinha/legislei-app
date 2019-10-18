@@ -73,10 +73,14 @@ export function formatHouse(house: string): string {
 
 export async function receiveNotification(message: Message) {
     const goToReportOverview = () => {
-        const reportsInfo = JSON.parse(message.data.reports);
+        const reportsInfoRaw = message.data.reports;
+        const reportsIdsRaw = message.data.reportsIds;
         topmost().navigate({
             moduleName: "reports-overview/reports-overview-page",
-            context: reportsInfo
+            context: {
+                reports: (reportsInfoRaw) ? JSON.parse(reportsInfoRaw) : null,
+                reportsIds: (reportsIdsRaw) ? JSON.parse(reportsIdsRaw) : null
+            }
         });
     };
     console.log(message);

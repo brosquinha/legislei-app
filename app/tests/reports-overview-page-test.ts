@@ -8,7 +8,7 @@ import * as sinon from "sinon";
 import * as reportsOverview from "../reports-overview/reports-overview-page";
 
 describe("onPageLoaded", function() {
-    it("should set bindingContext with received event", function() {
+    it("should set bindingContext with received event for default notification", async () => {
         const fakeReportsOverview = [
             {
                 "id": "5d7d4882d03d3b0003c16cd8",
@@ -48,17 +48,62 @@ describe("onPageLoaded", function() {
             }
         ];
         const fakePage: any = fromObject({});
-        fakePage.navigationContext = fakeReportsOverview
+        fakePage.navigationContext = {
+            reports: fakeReportsOverview,
+            reportsIds: null
+        }
         const fakeEvent: EventData = {
             eventName: "test",
             object: fakePage
         };
 
-        reportsOverview.onPageLoaded(fakeEvent);
+        await reportsOverview.onPageLoaded(fakeEvent);
         let fakeBindingContext: any = fakePage;
         fakeBindingContext = fakeBindingContext.bindingContext;
 
         assert.deepEqual(fakeBindingContext.get("reports"), fakeReportsOverview);
+    });
+
+    it("should get all reports by ids and subscriptions list for any failed report for alternative notificaiton", async () => {
+        const fakeAlternativeNotification = [
+            "5d7d4882d03d3b0003c16cd8",
+            "5d0bbc36c7d37e000331e13a",
+            null,
+            "5d0bba74c7d37e000331e139",
+        ]
+        const fakeReportSubscriptions = {
+            parlamentares: [{
+                "nome": "GLEISI HOFFMANN",
+                "partido": "PT",
+                "uf": "SP",
+                "foto": "https://www.camara.leg.br/internet/deputado/bandep/107283.jpg"
+            }],
+            parlamentar: {id: "123"}
+        };
+        const requireFakeResponse = {
+            statusCode: 401,
+            content: {toJSON: () => {return fakeReportSubscriptions}}
+ 
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.getViewById = (id: string) => {
+            return {refresh: () => {}}
+        };
+        fakePage.navigationContext = {
+            reports: null,
+            reportsIds: fakeAlternativeNotification
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+
+        await reportsOverview.onPageLoaded(fakeEvent);
+
+        assert.equal(requireFake.callCount, 4);
+        sinon.restore();
     });
 });
 

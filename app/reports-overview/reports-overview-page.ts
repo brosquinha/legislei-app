@@ -1,17 +1,33 @@
 import { EventData, fromObject } from "tns-core-modules/data/observable";
 import { Page } from "tns-core-modules/ui/page";
-import { Button } from "tns-core-modules/ui/button";
-import { topmost, goBack } from "tns-core-modules/ui/frame/frame";
+import { topmost } from "tns-core-modules/ui/frame/frame";
 
 import { getAPI } from "../utils";
+import { getReportsInfos } from "./alternative-notification-helper";
 
-export function onPageLoaded(args: EventData) {
+export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
-    let context_info = page.navigationContext;
-    let source = fromObject({
-        reports: context_info,
-    })
-    page.bindingContext = source;
+    const context_info = page.navigationContext;
+    if (context_info.reports) {
+        const source = fromObject({
+            reports: context_info.reports,
+            isLoading: false
+        })
+        page.bindingContext = source;
+        return context_info.reports;
+    } else {
+        const source = fromObject({
+            reports: [],
+            isLoading: true
+        })
+        page.bindingContext = source;
+        const reportsView: any = page.getViewById("reportsView");
+        const reports = await getReportsInfos(context_info.reportsIds);
+        source.set("reports", reports);
+        source.set("isLoading", false);
+        reportsView.refresh();
+        return reports;
+    }
 }
 
 export function goBackTo(args: EventData): void {
