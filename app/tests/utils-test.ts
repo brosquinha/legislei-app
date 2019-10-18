@@ -7,6 +7,7 @@ import { messaging, Message } from "nativescript-plugin-firebase/messaging";
 import * as sinon from "sinon";
 
 import * as utils from "../utils";
+import * as platform from "tns-core-modules/platform";
 
 describe("getAPI", function() {
     it("should call ensureLoginDecorator when HTTP request suceeds", async () => {
@@ -114,7 +115,7 @@ describe("postAPI", function() {
     });
 });
 
-describe("onMessageReceivedCallback", function() {
+describe("receiveNotification", function() {
     this.timeout(3000);
     it("should go to reports overview page after 1 sec if notification on background", async () => {
         const sleep = (ms: number) => {
@@ -190,4 +191,102 @@ describe("onMessageReceivedCallback", function() {
 
         sinon.restore();
     });
+});
+
+describe("syncDeviceToken", function() {
+    it("should request new device route if no device with same uuid is found", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const fakeDeviceList = [
+            {uuid: "123"}
+        ]
+        const requireFakeResponse = {
+            statusCode: 200,
+            content: {toJSON: () => {return fakeDeviceList}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+
+        await utils.syncDeviceToken("---token---")
+
+        try {
+            const requireFakePostCallArg = requireFake.lastCall.lastArg;
+            assert.isTrue(requireFake.called);
+            assert.equal(requireFake.callCount, 2);
+            assert.equal(requireFakePostCallArg.method, "POST")
+            assert.include(requireFakePostCallArg.url, "usuarios/dispositivos")
+        } catch (e) {
+            sinon.restore();
+            throw e
+        }
+
+        sinon.restore();
+    });
+
+    it("should request update route if there is a device with current uuid, but token does not match", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const fakeDeviceList = [
+            {uuid: "123"}, {uuid: platform.device.uuid, token: "imdifferent"}
+        ]
+        const requireFakeResponse = {
+            statusCode: 200,
+            content: {toJSON: () => {return fakeDeviceList}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+
+        await utils.syncDeviceToken("---token---")
+
+        try {
+            const requireFakePostCallArg = requireFake.lastCall.lastArg;
+            assert.isTrue(requireFake.called);
+            assert.equal(requireFake.callCount, 2);
+            assert.equal(requireFakePostCallArg.method, "PATCH")
+            assert.include(requireFakePostCallArg.url, `usuarios/dispositivos/${platform.device.uuid}`)
+        } catch (e) {
+            sinon.restore();
+            throw e
+        }
+
+        sinon.restore();
+    });
+
+    it("should make no further API requests if current device has same token", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const fakeDeviceList = [
+            {uuid: "123"}, {uuid: platform.device.uuid, token: "---token---"}
+        ]
+        const requireFakeResponse = {
+            statusCode: 200,
+            content: {toJSON: () => {return fakeDeviceList}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+
+        await utils.syncDeviceToken("---token---")
+
+        try {
+            const requireFakePostCallArg = requireFake.lastCall.lastArg;
+            assert.isTrue(requireFake.called);
+            assert.equal(requireFake.callCount, 1);
+            assert.equal(requireFakePostCallArg.method, "GET")
+            assert.include(requireFakePostCallArg.url, "usuarios/dispositivos")
+        } catch (e) {
+            sinon.restore();
+            throw e
+        }
+
+        sinon.restore();        
+    })
 });

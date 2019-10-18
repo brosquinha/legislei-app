@@ -5,6 +5,7 @@ import { request, HttpResponse } from "tns-core-modules/http";
 import * as applicationSettings from "tns-core-modules/application-settings";
 import { messaging, Message } from "nativescript-plugin-firebase/messaging";
 import { confirm } from "tns-core-modules/ui/dialogs";
+import * as platform from "tns-core-modules/platform";
 
 /**
  * Makes a GET request to Legislei REST API
@@ -28,7 +29,7 @@ export async function getAPI(path: string, callback: any): Promise<void> {
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
-export async function postAPI(path: string, body: object, callback: any): Promise<void> {
+export async function postAPI(path: string, body: object, callback: any, method="POST"): Promise<void> {
     const serverURI: String = applicationSettings.getString("serverURI");
     const secureStorage = new SecureStorage();
     const userToken = secureStorage.getSync({
@@ -36,7 +37,7 @@ export async function postAPI(path: string, body: object, callback: any): Promis
     });
     return await request({
         url: `https://legislei-stg.herokuapp.com/v1/${path}`,
-        method: "POST",
+        method: method,
         content: JSON.stringify(body),
         headers: {
             "Content-Type": "application/json",
@@ -106,6 +107,7 @@ export function subscribeToPushNotifications() {
     messaging.registerForPushNotifications({
         onPushTokenReceivedCallback: (token: string): void => {
             console.log("Firebase plugin received a push token: " + token);
+            syncDeviceToken(token)
         },
     
         onMessageReceivedCallback: receiveNotification,
@@ -116,4 +118,42 @@ export function subscribeToPushNotifications() {
         // Whether you want this plugin to always handle the notifications when the app is in foreground. Currently used on iOS only. Default false.
         showNotificationsWhenInForeground: true
     }).then(() => console.log("Registered for push"));
+}
+
+export async function syncDeviceToken(token: string) {
+    const uuid = platform.device.uuid;
+    await getAPI("usuarios/dispositivos", async (data) => {
+        if (data.statusCode != 200) {
+            console.warn("Could not get user devices")
+            return
+        }
+        const deviceList: any[] = data.content.toJSON();
+        const thisDevice = deviceList.find((x) => x.uuid == uuid);
+        if (thisDevice) {
+            if (thisDevice.token == token) {
+                console.log("Token already synced")
+            } else {
+                await postAPI(`usuarios/dispositivos/${uuid}`, {
+                    token: token,
+                }, (data) => {
+                    if (data.statusCode == 200)
+                        console.log("Token successfully synced");
+                    else
+                        console.warn(`Update device route returned ${data.statusCode}`)
+                }, "PATCH")
+            }
+        } else {
+            await postAPI("usuarios/dispositivos", {
+                uuid: uuid,
+                token: token,
+                name: `${platform.device.manufacturer} ${platform.device.model}`,
+                os: `${platform.device.os} ${platform.device.osVersion}`
+            }, (data) => {
+                if (data.statusCode == 201)
+                    console.log("Token successfully synced");
+                else
+                    console.warn(`New device route returned ${data.statusCode}`)
+            })
+        }
+    });
 }
