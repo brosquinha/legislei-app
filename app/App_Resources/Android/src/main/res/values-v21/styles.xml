@@ -5,6 +5,12 @@
     <style name="AppTheme" parent="AppThemeBase">
         <item name="android:datePickerStyle">@style/SpinnerDatePicker</item>
         <item name="android:timePickerStyle">@style/SpinnerTimePicker</item>
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/primary_dark_color</item>
+        <item name="colorAccent">@color/ns_accent</item>
+        <item name="actionMenuTextColor">@color/white</item>
+        <!-- <item name="android:textColorSecondary">@color/white</item> -->
+        <item name="android:actionMenuTextColor">@color/white</item>
     </style>
 
     <!-- Default style for DatePicker - in spinner mode -->

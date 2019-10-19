@@ -124,6 +124,7 @@ export function subscribeToPushNotifications() {
 
 export async function syncDeviceToken(token: string) {
     const uuid = platform.device.uuid;
+    console.log("syncDeviceToken called")
     await getAPI("usuarios/dispositivos", async (data) => {
         if (data.statusCode != 200) {
             console.warn("Could not get user devices")

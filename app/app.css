@@ -18,3 +18,8 @@ components that have the btn class name.
 .btn {
     font-size: 18;
 }
+
+ActionBar.action-bar {
+    background-color:  #009B3A;
+    color: white;
+}

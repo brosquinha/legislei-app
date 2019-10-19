@@ -4,7 +4,7 @@
     </ActionBar>
 
     <ActivityIndicator busy="{{ report === null }}" height="{{ (report === null) ? 100 : 0 }}" />
-    <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}">
+    <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}" tabTextColor="white" selectedTabTextColor="white">
         <TabViewItem title="Parlamentar">
             <StackLayout>
                 <!-- <StackLayout orientation="horizontal"> -->
