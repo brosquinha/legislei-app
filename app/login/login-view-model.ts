@@ -5,6 +5,8 @@ import { request } from "tns-core-modules/http";
 import * as applicationSettings from "tns-core-modules/application-settings";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 
+import { environment } from "~/environment";
+
 export class LoginViewModel extends Observable {
     constructor() {
         super();
@@ -25,10 +27,10 @@ export class LoginViewModel extends Observable {
 
     async onTap(_args: EventData) {
         this.set("isLoading", true);
-        const serverURI: String = applicationSettings.getString("serverURI");
+        const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
         let secureStorage = new SecureStorage();
         return await request({
-            url: "https://legislei-stg.herokuapp.com/v1/usuarios/token_acesso",
+            url: `${serverURI}usuarios/token_acesso`,
             method: "POST",
             headers: {"Content-Type": "application/json"},
             content: JSON.stringify({
@@ -36,7 +38,6 @@ export class LoginViewModel extends Observable {
                 senha: this.password
             })
         }).then((response) => {
-            console.log(response);
             if (response.statusCode >= 400)
                 alert(response.content.toJSON().message);
             else {

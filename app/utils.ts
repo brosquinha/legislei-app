@@ -7,6 +7,8 @@ import { messaging, Message } from "nativescript-plugin-firebase/messaging";
 import { confirm } from "tns-core-modules/ui/dialogs";
 import * as platform from "tns-core-modules/platform";
 
+import { environment } from "./environment";
+
 /**
  * Makes a GET request to Legislei REST API
  * 
@@ -14,13 +16,13 @@ import * as platform from "tns-core-modules/platform";
  * @param callback Callback when requests succeeds
  */
 export async function getAPI(path: string, callback: any): Promise<void> {
-    const serverURI: String = applicationSettings.getString("serverURI");
+    const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
     const secureStorage = new SecureStorage();
     const userToken = secureStorage.getSync({
         key: "userToken",
     });
     return await request({
-        url: `https://legislei-stg.herokuapp.com/v1/${path}`,
+        url: `${serverURI}${path}`,
         method: "GET",
         headers: {
             "Authorization": userToken,
@@ -30,13 +32,13 @@ export async function getAPI(path: string, callback: any): Promise<void> {
 }
 
 export async function postAPI(path: string, body: object, callback: any, method="POST"): Promise<void> {
-    const serverURI: String = applicationSettings.getString("serverURI");
+    const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
     const secureStorage = new SecureStorage();
     const userToken = secureStorage.getSync({
         key: "userToken",
     });
     return await request({
-        url: `https://legislei-stg.herokuapp.com/v1/${path}`,
+        url: `${serverURI}${path}`,
         method: method,
         content: JSON.stringify(body),
         headers: {
