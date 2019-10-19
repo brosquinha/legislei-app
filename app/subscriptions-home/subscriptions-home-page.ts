@@ -5,8 +5,6 @@ import { confirm } from "tns-core-modules/ui/dialogs";
 
 import { getAPI, ensureLoginDecorator, subscribeToPushNotifications } from "../utils";
 
-const notif = subscribeToPushNotifications();
-
 export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
     let source = fromObject({
@@ -17,6 +15,7 @@ export async function onPageLoaded(args: EventData) {
     })
     page.bindingContext = source;
     return await getAPI("usuarios/inscricoes", (data) => {
+        const notif = subscribeToPushNotifications();
         source.set("subscriptions", data.content.toJSON());
     });
 }
