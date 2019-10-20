@@ -9,7 +9,7 @@ import * as sinon from "sinon";
 import * as report from "../report/report-page";
 
 describe("loadReport", function() {
-    it("should load report", async () => {
+    it("should show modal and load report if no report already present", async () => {
         const requireFakeResponse = {
             id: "reportId",
             parlamentar: {
@@ -33,6 +33,8 @@ describe("loadReport", function() {
         });
         sinon.replace(httpr, 'request', requireFake);
         const fakePage: any = fromObject({});
+        const fakeShowModal = sinon.fake.returns({closeModal: () => null});
+        fakePage.showModal = fakeShowModal;
         fakePage.navigationContext = {
             reportId: "14"
         }
@@ -47,6 +49,7 @@ describe("loadReport", function() {
             fakeBindingContext = fakeBindingContext.bindingContext;
             
             assert.isTrue(requireFake.called);
+            assert.isTrue(fakeShowModal.called);
             assert.deepEqual(fakeBindingContext.get("report"), requireFakeResponse);
         } catch(e) {
             sinon.restore();
@@ -54,6 +57,56 @@ describe("loadReport", function() {
         }
         sinon.restore();
     });
+
+    it("should do nothing if report already present", async () => {
+        const requireFakeResponse = {
+            id: "reportId",
+            parlamentar: {
+                id: "123",
+                nome: "Parlamentar",
+                partido: "PPartido",
+                uf: "BR",
+                casa: "BR1",
+                foto: "https://foto.com.br"
+            },
+            data_inicial: "2019-10-11T23:40:28.066Z",
+            data_final: "2019-10-11T23:40:28.066Z",
+            eventos_ausentes: [
+                {presenca: "Presente"},
+                {presenca: "Ausência esperada"},
+            ]
+        };
+        const requireFake = sinon.fake.resolves({
+            statusCode: 200,
+            content: {toJSON: () => {return requireFakeResponse}}
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.bindingContext = true;
+        const fakeShowModal = sinon.fake.returns({closeModal: () => null});
+        fakePage.showModal = fakeShowModal;
+        fakePage.navigationContext = {
+            reportId: "14"
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+        
+        try {
+            await report.loadReport(fakeEvent)
+            let fakeBindingContext: any = fakePage;
+            fakeBindingContext = fakeBindingContext.bindingContext;
+            
+            assert.isFalse(requireFake.called);
+            assert.isFalse(fakeShowModal.called);
+            assert.isTrue(fakeBindingContext);
+        } catch(e) {
+            sinon.restore();
+            throw e
+        }
+        sinon.restore();
+    })
 });
 
 describe("openProposition", function() {

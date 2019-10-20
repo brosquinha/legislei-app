@@ -9,6 +9,8 @@ export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
     let context_info = page.navigationContext;
     let reports = [];
+    if (page.bindingContext)
+        return
     let source = fromObject({
         reports: reports,
         isLoading: true,

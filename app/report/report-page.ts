@@ -3,6 +3,7 @@ import { EventData, Page } from "tns-core-modules/ui/page/page";
 import { fromObject, Observable } from "tns-core-modules/data/observable/observable";
 import * as utils from "tns-core-modules/utils/utils";
 import { topmost } from "tns-core-modules/ui/frame/frame";
+import { ShowModalOptions } from "tns-core-modules/ui/core/view";
 import { alert, action } from "tns-core-modules/ui/dialogs";
 
 let reportId: string;
@@ -10,6 +11,14 @@ let reportId: string;
 export async function loadReport(args: EventData) {
     const page = <Page>args.object;
     const context_info = page.navigationContext;
+    if (page.bindingContext)
+        return;
+    const modalOptions: ShowModalOptions = {
+        context: {},
+        closeCallback: null,
+        fullscreen: true
+    }
+    const modal = page.showModal("report/loading-modal", modalOptions);
     const source = fromObject({
         report: null,
         title: "Relatório ...",
@@ -18,6 +27,7 @@ export async function loadReport(args: EventData) {
     page.bindingContext = source;
     return await getAPI(`relatorios/${context_info.reportId}`, (data) => {
         const report = data.content.toJSON();
+        modal.closeModal();
         reportId = report.id;
         report.eventos_ausentes_filtered = report.eventos_ausentes.filter((e) => e.presenca != 'Ausência esperada');
         const initialDate = new Date(Date.parse(report.data_inicial))

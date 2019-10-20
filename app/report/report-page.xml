@@ -3,7 +3,6 @@
         <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
     </ActionBar>
 
-    <ActivityIndicator busy="{{ report === null }}" height="{{ (report === null) ? 100 : 0 }}" />
     <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}" tabTextColor="white" selectedTabTextColor="white">
         <TabViewItem title="Parlamentar">
             <StackLayout>
@@ -22,7 +21,7 @@
         </TabViewItem>
         <TabViewItem title="Órgãos">
             <StackLayout>
-                <ListView items="{{ report.orgaos }}">
+                <ListView items="{{ report.orgaos }}" height="auto">
                     <ListView.itemTemplate>
                         <StackLayout>
                             <Label text="{{ nome }}" class="m-5 h3"></Label>
@@ -54,7 +53,7 @@
                     class="h2 text-center m-15"
                     text="Sem eventos presentes nesse período"
                     visibility="{{ (!report.eventos_presentes.length) ? 'visible' : 'collapsed' }}"></Label>
-                <ListView items="{{ report.eventos_presentes }}">
+                <ListView items="{{ report.eventos_presentes }}" height="auto">
                     <ListView.itemTemplate>
                         <StackLayout onTap="showEventDetails" data-id="{{ id }}">
                             <Label text="{{ nome }}" class="m-5 h3"></Label>

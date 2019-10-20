@@ -7,7 +7,10 @@ import { getAPI, ensureLoginDecorator, subscribeToPushNotifications } from "../u
 
 export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
+    if (page.bindingContext)
+        return;
     let source = fromObject({
+        isLoading: true,
         subscriptions: {
             parlamentares: [],
             intervalo: "Carregando"
@@ -16,6 +19,7 @@ export async function onPageLoaded(args: EventData) {
     page.bindingContext = source;
     return await getAPI("usuarios/inscricoes", (data) => {
         const notif = subscribeToPushNotifications();
+        source.set("isLoading", false);
         source.set("subscriptions", data.content.toJSON());
     });
 }

@@ -4,30 +4,33 @@
         <ActionItem text="Sair" android.position="popup" tap="confirmLogout"></ActionItem>
     </ActionBar>
 
-    <GridLayout rows="*, auto">
-        <FlexboxLayout>
-            <ListView items="{{ subscriptions.parlamentares }}" height="200">
-                <ListView.itemTemplate>
-                    <GridLayout columns="2*, *" margin="3">
-                        <StackLayout col="0">
-                            <Label class="h2" text="{{ nome + ' (' + partido +')' }}" />
-                            <Button class="btn btn-primary btn-active" text="Minhas avaliações" />
-                            <Button
-                                class="btn btn-outline btn-active"
-                                text="Últimos relatórios"
-                                data-id="{{ id }}"
-                                data-house="{{ casa }}"
-                                data-name="{{ nome }}"
-                                onTap="onCheckAssemblymanReports" />
-                            <Button class="btn btn-outline btn-active" text="Deletar inscrição" onTap="confirmDelete" />
-                        </StackLayout>
-                        <Image col="1" src="{{ foto }}" height="200" stretch="aspectFit" loadMode="async" />
-                    </GridLayout>
-                </ListView.itemTemplate>
-            </ListView>
-        </FlexboxLayout>
-        <StackLayout horizontalAlignment="right" row="1">
-            <Button class="btn btn-primary btn-rounded-lg btn-active" style="background-color: #28a745" text="+" />
-        </StackLayout>
-    </GridLayout>
+    <StackLayout>
+        <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+        <GridLayout rows="*, auto">
+            <FlexboxLayout>
+                <ListView items="{{ subscriptions.parlamentares }}" height="200">
+                    <ListView.itemTemplate>
+                        <GridLayout columns="2*, *" margin="3">
+                            <StackLayout col="0">
+                                <Label class="h2" text="{{ nome + ' (' + partido +')' }}" />
+                                <Button class="btn btn-primary btn-active" text="Minhas avaliações" />
+                                <Button
+                                    class="btn btn-outline btn-active"
+                                    text="Últimos relatórios"
+                                    data-id="{{ id }}"
+                                    data-house="{{ casa }}"
+                                    data-name="{{ nome }}"
+                                    onTap="onCheckAssemblymanReports" />
+                                <Button class="btn btn-outline btn-active" text="Deletar inscrição" onTap="confirmDelete" />
+                            </StackLayout>
+                            <Image col="1" src="{{ foto }}" height="200" stretch="aspectFit" loadMode="async" />
+                        </GridLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </FlexboxLayout>
+            <StackLayout horizontalAlignment="right" row="1">
+                <Button class="btn btn-primary btn-rounded-lg btn-active" style="background-color: #28a745" text="+" />
+            </StackLayout>
+        </GridLayout>
+    </StackLayout>
 </Page>

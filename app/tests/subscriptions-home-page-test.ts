@@ -14,7 +14,7 @@ describe("onPageLoaded", function() {
         sinon.restore()
     })
 
-    it("should get users subscriptions", async () => {
+    it("should get users subscriptions if not going back", async () => {
         const requireFakeResponse = {
             parlamentares: [],
             intervalo: 7
@@ -37,6 +37,37 @@ describe("onPageLoaded", function() {
             
             assert.isTrue(requireFake.called);
             assert.equal(fakeBindingContext.get("subscriptions"), requireFakeResponse)
+        } catch(e) {
+            sinon.restore();
+            throw e
+        }
+        sinon.restore();
+    });
+
+    it("should do nothing if going back", async () => {
+        const requireFakeResponse = {
+            parlamentares: [],
+            intervalo: 7
+        };
+        const requireFake = sinon.fake.resolves({
+            statusCode: 200,
+            content: {toJSON: () => {return requireFakeResponse}}
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.bindingContext = true
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+        
+        try {
+            await home.onPageLoaded(fakeEvent);
+            let fakeBindingContext: any = fakePage;
+            fakeBindingContext = fakeBindingContext.bindingContext;
+            
+            assert.isFalse(requireFake.called);
+            assert.isTrue(fakeBindingContext)
         } catch(e) {
             sinon.restore();
             throw e

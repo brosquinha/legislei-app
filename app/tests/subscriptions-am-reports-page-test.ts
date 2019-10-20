@@ -8,7 +8,7 @@ import * as sinon from "sinon";
 import * as reportsPage from "../subscriptions-am-reports/subscriptions-am-reports-page";
 
 describe("onPageLoaded", function() {
-    it("should set context with values returned from API", async () => {
+    it("should set context with values returned from API if no values already present", async () => {
         const requireFakeResponse = [
             {data_final: "2019-03-30T00:00:00-03:00"}
         ];
@@ -43,6 +43,40 @@ describe("onPageLoaded", function() {
         }
         sinon.restore();
     });
+
+    it("should do nothing if values already present", async () => {
+        const requireFakeResponse = [
+            {data_final: "2019-03-30T00:00:00-03:00"}
+        ];
+        const requireFake = sinon.fake.resolves({
+            statusCode: 200,
+            content: {toJSON: () => {return requireFakeResponse}}
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.bindingContext = true;
+        fakePage.navigationContext = {
+            assemblyman_name: "name",
+            assemblyman_house: "BR1"
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+        
+        try {
+            await reportsPage.onPageLoaded(fakeEvent);
+            let fakeBindingContext: any = fakePage;
+            fakeBindingContext = fakeBindingContext.bindingContext;
+            
+            assert.isFalse(requireFake.called);
+            assert.isTrue(fakeBindingContext);
+        } catch(e) {
+            sinon.restore();
+            throw e
+        }
+        sinon.restore();
+    })
 });
 
 describe("goToReportPage", function() {
