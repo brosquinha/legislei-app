@@ -25,7 +25,7 @@ export async function onPageLoaded(args: EventData) {
         });
         source.set("reports", reports)
         source.set("isLoading", false)
-    });
+    }, ["id", "data_inicial", "data_final"]);
 }
 
 export function goBackTo(args: EventData): void {

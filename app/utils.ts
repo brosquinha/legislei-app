@@ -15,19 +15,22 @@ import { environment } from "./environment";
  * @param path Request configuration
  * @param callback Callback when requests succeeds
  */
-export async function getAPI(path: string, callback: any): Promise<void> {
+export async function getAPI(path: string, callback: any, filter: string[] | null = null): Promise<void> {
     const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
     const secureStorage = new SecureStorage();
     const userToken = secureStorage.getSync({
         key: "userToken",
     });
+    let headers = {
+        "Authorization": userToken,
+    }
+    if (filter) {
+        headers["X-Fields"] = filter.join(",")
+    }
     return await request({
         url: `${serverURI}${path}`,
         method: "GET",
-        headers: {
-            "Authorization": userToken,
-            // "X-Fields": "id,data_inicial,data_final"
-        }
+        headers: headers
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
