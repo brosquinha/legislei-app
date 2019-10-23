@@ -58,4 +58,8 @@ export class LoginViewModel extends Observable {
             alert(e.message);
         });
     }
+
+    registerAccount(_args: EventData) {
+        alert("Tela em construção")
+    }
 }

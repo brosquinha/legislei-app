@@ -2,9 +2,7 @@
     navigatingTo="onNavigatingTo" 
     xmlns="http://schemas.nativescript.org/tns.xsd">
     
-    <ActionBar class="action-bar">
-        <Label class="action-bar-title" text="Login"></Label>
-    </ActionBar>
+    <ActionBar title="Login" class="action-bar"></ActionBar>
 
     <StackLayout class="form">
         <StackLayout class="input-field">
@@ -20,5 +18,9 @@
             <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
             <Button visibility="{{ (isLoading) ? 'collapsed' : 'visible' }}" text="Enviar" tap="{{ onTap }}" class="btn btn-primary btn-active" />
         </StackLayout>
+
+        <StackLayout class="hr-light m-10"></StackLayout>
+
+        <Button class="btn btn-active btn-outline" text="Criar conta" tap="{{ registerAccount }}" />
     </StackLayout>
 </Page>
