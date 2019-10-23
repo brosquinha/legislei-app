@@ -50,6 +50,10 @@ export async function confirmDelete(args: EventData) {
     });
 }
 
+export function newSubscription(args: EventData) {
+    return alert("Tela em construção")
+}
+
 export async function confirmLogout(args: EventData) {
     return await confirm({
         title: "Sair",

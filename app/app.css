@@ -23,3 +23,12 @@ ActionBar.action-bar {
     background-color:  #009B3A;
     color: white;
 }
+
+.fab {
+    width: 60;
+    height: 60;
+    margin: 20px;
+    background-color: #28a745;
+    horizontal-align: right;
+    vertical-align: bottom;
+}

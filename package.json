@@ -12,6 +12,7 @@
   "license": "SEE LICENSE IN <your-license-filename>",
   "repository": "<fill-your-repository-here>",
   "dependencies": {
+    "@nstudio/nativescript-floatingactionbutton": "^1.1.0",
     "@types/sinon": "^7.5.0",
     "nativescript-plugin-firebase": "^10.0.1",
     "nativescript-secure-storage": "^2.5.0",

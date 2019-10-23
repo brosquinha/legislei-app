@@ -17,7 +17,7 @@ export async function onPageLoaded(args: EventData) {
         assemblyman_name: context_info.assemblyman_name
     })
     page.bindingContext = source;
-    return await getAPI(`relatorios?casa=${context_info.assemblyman_house}&parlamentar=${context_info.assemblyman_id}`, (data) => {
+    return await getAPI(`relatorios?casa=${encodeURIComponent(context_info.assemblyman_house)}&parlamentar=${context_info.assemblyman_id}`, (data) => {
         reports = data.content.toJSON();
         reports.forEach(report => {
             let finalDate = new Date(Date.parse(report.data_final));
