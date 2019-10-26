@@ -32,3 +32,12 @@ ActionBar.action-bar {
     horizontal-align: right;
     vertical-align: bottom;
 }
+
+Button.btn-primary {
+    background-color: #0052b4;
+}
+
+Button.btn-outline {
+    border-color: #0052b4;
+    color: #0052b4;
+}
