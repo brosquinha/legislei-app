@@ -5,9 +5,10 @@
     <StackLayout>
         <ListView items="{{ events }}">
             <ListView.itemTemplate>
-                <StackLayout>
+                <StackLayout onTap="showFullEventTitle">
                     <Label text="{{ nome }}" class="m-5 h3"></Label>
                     <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                    <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
                 </StackLayout>
             </ListView.itemTemplate>
         </ListView>

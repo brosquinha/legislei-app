@@ -45,6 +45,29 @@ describe("openProposition", function() {
     });
 });
 
+describe("showFullEventTitle", function () {
+    it("should show full event title", function() {
+        const fakePage: any = fromObject({
+            event: {nome: "Full very long name"}
+        });
+        fakePage.bindingContext = fakePage;
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
+        const fakeAlert = sinon.fake();
+        sinon.replace(dialogs, "alert", fakeAlert);
+
+        eventDetails.showFullEventTitle(fakeEvent);
+
+        assert.isTrue(fakeAlert.calledOnceWith({
+            message: fakePage.event.nome,
+            okButtonText: "Ok"
+        }));
+        sinon.restore();
+    });
+});
+
 describe("rateEvent", function() {
     it("should call rate item action dialog", function() {
         const fakePage: any = fromObject({

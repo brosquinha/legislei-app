@@ -5,7 +5,7 @@
     <StackLayout>
         <GridLayout columns="2*, *" margin="3" height="100">
             <StackLayout col="0">
-                <Label text="{{ event.nome }}" class="m-5 h2"></Label>
+                <Label text="{{ event.nome }}" class="m-5 h2" textWrap="false" onTap="showFullEventTitle"></Label>
                 <Label text="{{ event.situacao }}" class="m-5" textWrap="true"></Label>
                 <Label text="{{ event.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
             </StackLayout>
@@ -15,7 +15,7 @@
             <ListView.itemTemplate>
                 <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">
                     <Label text="{{ pauta }}" class="m-5 h3" textWrap="true"></Label>
-                    <Label text="{{ (voto == 'ERROR') ? 'Sem informações de voto' : voto }}" class="m-5" textWrap="true"></Label>
+                    <Label text="{{ (!voto || voto == 'ERROR') ? 'Sem informações de voto' : 'Votou ' + voto }}" class="m-5" textWrap="true"></Label>
                 </StackLayout>
             </ListView.itemTemplate>
         </ListView>
