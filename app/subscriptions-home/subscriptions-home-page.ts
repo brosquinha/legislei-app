@@ -62,6 +62,6 @@ export async function confirmLogout(args: EventData) {
         cancelButtonText: "Cancelar"
     }).then(result => {
         if (result)
-            ensureLoginDecorator({statusCode: 401}, null);
+            ensureLoginDecorator({statusCode: 401, headers: null}, null);
     });
 }

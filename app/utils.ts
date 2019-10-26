@@ -1,4 +1,4 @@
-import { topmost, EventData } from "tns-core-modules/ui/frame/frame";
+import { topmost } from "tns-core-modules/ui/frame/frame";
 
 import { SecureStorage } from "nativescript-secure-storage";
 import { request, HttpResponse } from "tns-core-modules/http";
@@ -31,7 +31,7 @@ export async function getAPI(path: string, callback: any, filter: string[] | nul
         url: `${serverURI}${path}`,
         method: "GET",
         headers: headers
-    }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
+    }).then(r => ensureLoginDecorator(r, (response) => displayErrorMessageDecorator(response, callback)), (e) => alert(e.message));
 }
 
 export async function postAPI(path: string, body: object, callback: any, method="POST"): Promise<void> {
@@ -51,11 +51,8 @@ export async function postAPI(path: string, body: object, callback: any, method=
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
-export function ensureLoginDecorator(response: any, callback: any) {
+export function ensureLoginDecorator(response: HttpResponse, callback: CallableFunction) {
     const secureStorage = new SecureStorage();
-    const userToken = secureStorage.getSync({
-        key: "userToken",
-    });
     if (response.statusCode == 401) {
         secureStorage.removeSync({
             key: "userToken",
@@ -69,9 +66,21 @@ export function ensureLoginDecorator(response: any, callback: any) {
         callback(response);
 }
 
+export function displayErrorMessageDecorator(response: HttpResponse, callback: CallableFunction) {
+    if (response.statusCode >= 500) {
+        const data = response.content.toJSON();
+        console.error(data);
+        alert(data.message)
+    }
+    else
+        callback(response);
+}
+
 export function formatHouse(house: string): string {
-    if (house == "BR1" || house == "BR2")
+    if (house == "BR1")
         return "deputado federal";
+    else if (house == "BR2")
+        return "senador";
     else if (house.length == 2)
         return "deputado estadual";
     return "vereador";

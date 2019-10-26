@@ -10,7 +10,7 @@ import * as utils from "../utils";
 import * as platform from "tns-core-modules/platform";
 
 describe("getAPI", function() {
-    it("should call ensureLoginDecorator when HTTP request suceeds", async () => {
+    it("should call ensureLoginDecorator when HTTP request succeeds", async () => {
         const secureStorage = new SecureStorage();
         secureStorage.setSync({
             key: "userToken",
@@ -58,6 +58,27 @@ describe("getAPI", function() {
             moduleName: "login/login-page",
             clearHistory: true
         }));
+        sinon.restore();
+    });
+
+    it("should not call callback if request return 500 status code", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 500,
+            content: {toJSON: () => {return {message: "Error ☹️"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        const callback = sinon.fake();
+
+        await utils.getAPI("/test", callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isFalse(callback.called);
         sinon.restore();
     });
 });
