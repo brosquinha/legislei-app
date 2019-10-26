@@ -18,6 +18,8 @@ export async function onPageLoaded(args: EventData) {
     })
     page.bindingContext = source;
     return await getAPI(`relatorios?casa=${encodeURIComponent(context_info.assemblyman_house)}&parlamentar=${context_info.assemblyman_id}`, (data) => {
+        if (data.statusCode != 200)
+            return alert("Não foi possível obter relatórios desse parlamentar");
         reports = data.content.toJSON();
         reports.forEach(report => {
             let finalDate = new Date(Date.parse(report.data_final));
