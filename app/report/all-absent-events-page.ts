@@ -2,7 +2,6 @@ import { EventData, Page } from "tns-core-modules/ui/page/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { fromObject } from "tns-core-modules/data/observable/observable";
 
-// import { showFullEventTitle } from "./event-details-page";
 import * as dialog from "tns-core-modules/ui/dialogs";
 import { rateItem } from "./report-page";
 

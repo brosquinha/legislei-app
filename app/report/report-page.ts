@@ -1,10 +1,11 @@
 import { getAPI, formatHouse, postAPI } from "../utils";
 import { EventData, Page } from "tns-core-modules/ui/page/page";
-import { fromObject, Observable } from "tns-core-modules/data/observable/observable";
+import { fromObject } from "tns-core-modules/data/observable/observable";
 import * as utils from "tns-core-modules/utils/utils";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { ShowModalOptions } from "tns-core-modules/ui/core/view";
 import { alert, action } from "tns-core-modules/ui/dialogs";
+import { showFullEventTitle } from "./all-absent-events-page";
 
 let reportId: string;
 
@@ -22,12 +23,15 @@ export async function loadReport(args: EventData) {
     const source = fromObject({
         report: null,
         title: "Relatório ...",
+        formattedInitialDate: '',
+        formattedFinalDate: '',
         formatHouse: formatHouse
     })
     page.bindingContext = source;
     return await getAPI(`relatorios/${context_info.reportId}`, (data) => {
+        if (data.statusCode != 200)
+            return alert("Não foi possível obter esse relatório").then(() => {topmost().goBack();})
         const report = data.content.toJSON();
-        modal.closeModal();
         reportId = report.id;
         report.eventos_ausentes_filtered = report.eventos_ausentes.filter((e) => e.presenca != 'Ausência esperada');
         const initialDate = new Date(Date.parse(report.data_inicial))
@@ -36,6 +40,9 @@ export async function loadReport(args: EventData) {
         const formattedFinalDate = ("0" + finalDate.getDate()).slice(-2)  + "/" + ("0" + (finalDate.getMonth()+1)).slice(-2) + "/" + finalDate.getFullYear();
         source.set("report", report);
         source.set("title", 'Relatório | ' + report.parlamentar.nome + ' | ' + formattedInitialDate + ' - ' + formattedFinalDate);
+        source.set('formattedInitialDate', formattedInitialDate);
+        source.set('formattedFinalDate', formattedFinalDate);
+        modal.closeModal();
     });
 }
 
@@ -90,7 +97,7 @@ export function showEventDetails(args: EventData) {
             context: event
         })
     } else {
-        alert("Evento sem pauta")
+        showFullEventTitle(args);
     }
 }
 
@@ -107,3 +114,5 @@ export function listAllEvents(args: EventData) {
 export function goBackTo(args: EventData): void {
     topmost().goBack();
 }
+
+export { showFullEventTitle }
