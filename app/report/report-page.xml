@@ -1,0 +1,106 @@
+<Page class="Page" loaded="loadReport">
+    <ActionBar title="{{ title }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <TabView id="reportTabView" visibility="{{ (report === null) ? 'collapsed' : 'visible' }}" tabTextColor="white" selectedTabTextColor="white">
+        <TabViewItem title="Parlamentar">
+            <StackLayout>
+                <Label 
+                    class="text-center h3 m-15 bg-primary p-10"
+                    style="background-color: #fff3cd; border-radius: 15px"
+                    textWrap="true" 
+                    text="{{ report.aviso }}" 
+                    visibility="{{ report.aviso ? 'visible' : 'collapsed' }}" />
+                <GridLayout columns="*, *" rows="*, auto" margin="15" verticalAlignment="top">
+                    <Image col="0" row="0" src="{{ report.parlamentar.foto }}" height="150" stretch="aspectFit" loadMode="async" />
+                    <StackLayout col="1" row="0">
+                        <Label class="h2 m-5" textWrap="true" text="{{ report.parlamentar.nome + ' (' + report.parlamentar.partido + ' - '+ report.parlamentar.uf + ')' }}"></Label>
+                        <Label class="h2 m-5" textWrap="true" text="{{ formattedInitialDate + ' - ' + formattedFinalDate }}"></Label>
+                        <Label class="h3 m-5 text-capitalize" textWrap="true" text="{{ formatHouse(report.parlamentar.casa) }}"></Label>
+                        <Label class="h3 m-5" textWrap="true" text="{{ 'Presença: ' + report.presenca_relativa }}"></Label>
+                    </StackLayout>
+                    <Label col="1" row="1" class="h5 m-5 m-t-20" text="Informações obtidas através do portal de Dados Abertos" textWrap="true" />
+                </GridLayout>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Órgãos">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Esse parlamentar não faz parte de órgãos nesse momento"
+                    textWrap="true"
+                    visibility="{{ (!report.orgaos.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.orgaos }}" height="auto">
+                    <ListView.itemTemplate>
+                        <StackLayout>
+                            <Label text="{{ nome }}" class="m-5 h3" textWrap="true"></Label>
+                            <Label text="{{ iniciais }}" class="m-5 text-left" textWrap="true"></Label>
+                            <Label text="{{ cargo }}" class="m-5 text-left" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Proposições">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem proposições nesse período"
+                    textWrap="true"
+                    visibility="{{ (!report.proposicoes.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.proposicoes }}" height="auto">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">
+                            <Label text="{{ tipo + '-' + numero }}" class="m-5 h3" textWrap="true"></Label>
+                            <Label text="{{ ementa }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Eventos presentes">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem eventos presentes nesse período"
+                    textWrap="true"
+                    visibility="{{ (!report.eventos_presentes.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.eventos_presentes }}" height="auto">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showEventDetails" data-id="{{ id }}">
+                            <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ (pautas.length) ? 'Clique para mais informações' : 'Evento sem pauta' }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Eventos ausentes">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Sem eventos ausentes nesse período"
+                    textWrap="true"
+                    visibility="{{ (!report.eventos_ausentes_filtered.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ report.eventos_ausentes_filtered }}" style="height:90%">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showFullEventTitle">
+                            <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+                <Button
+                    class="btn btn-active btn-outline"
+                    text="Ver demais eventos da semana"
+                    textWrap="true"
+                    visibility="{{ (report.eventos_ausentes_filtered.length) ? 'visible' : 'collapsed' }}"
+                    onTap="listAllEvents"></Button>
+            </StackLayout>
+        </TabViewItem>
+    </TabView>
+</Page>

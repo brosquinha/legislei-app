@@ -1,0 +1,16 @@
+<Page class="Page" loaded="loadEvents">
+    <ActionBar title="Todos eventos ausentes" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+    <StackLayout>
+        <ListView items="{{ events }}">
+            <ListView.itemTemplate>
+                <StackLayout onTap="showFullEventTitle">
+                    <Label text="{{ nome }}" class="m-5 h3"></Label>
+                    <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
+                    <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                </StackLayout>
+            </ListView.itemTemplate>
+        </ListView>
+    </StackLayout>
+</Page>
