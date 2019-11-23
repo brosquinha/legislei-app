@@ -33,7 +33,7 @@ describe("registerAccount", function() {
 
             assert.isTrue(requireFake.called);
             assert.isTrue(navigateFake.calledWithMatch({
-                moduleName: "login/login-page",
+                moduleName: "subscriptions-home/subscriptions-home-page",
                 clearHistory: true
             }));
             sinon.restore();

@@ -3,6 +3,7 @@ import { fromObject } from "tns-core-modules/data/observable/observable";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import * as dialog from "tns-core-modules/ui/dialogs";
 import { postAPI } from "~/utils";
+import { LoginViewModel } from "~/login/login-view-model";
 
 export function onLoaded(args: EventData) {
     const page = <Page>args.object;
@@ -28,11 +29,10 @@ export async function registerAccount(args: EventData) {
     }, (response) => {
         form.set("isLoading", false);
         if (response.statusCode == 201) {
-            //TODO login user and redirect to subscriptions home
-            topmost().navigate({
-                moduleName: "login/login-page",
-                clearHistory: true
-            })
+            const loginModel = new LoginViewModel();
+            loginModel.username = form.username;
+            loginModel.password = form.password;
+            loginModel.onTap(null);
         } else if (response.statusCode >= 400) {
             dialog.alert(response.content.toJSON().message);
         }
