@@ -136,6 +136,77 @@ describe("postAPI", function() {
     });
 });
 
+describe("formatHouse", function() {
+    it("should return deputado federal when input is BR1", function() {
+        const input = 'BR1';
+
+        const output = utils.formatHouse(input);
+
+        assert.equal(output, "deputado federal");
+    });
+
+    it("should return senador when input is BR2", function() {
+        const input = 'BR2';
+
+        const output = utils.formatHouse(input);
+
+        assert.equal(output, "senador");
+    });
+
+    it("should return deputado estadual when input is two characters long", function() {
+        const input1 = 'SP';
+        const input2 = 'BA';
+
+        const output1 = utils.formatHouse(input1);
+        const output2 = utils.formatHouse(input2);
+
+        assert.equal(output1, "deputado estadual");
+        assert.equal(output2, "deputado estadual");
+    });
+
+    it("should return vereador when input is longer than two characters long", function() {
+        const input1 = 'São Paulo';
+        const input2 = 'Manaus';
+
+        const output1 = utils.formatHouse(input1);
+        const output2 = utils.formatHouse(input2);
+
+        assert.equal(output1, "vereador");
+        assert.equal(output2, "vereador");
+    });
+});
+
+describe("parseDate", function() {
+    it("should return a valid Date object", function() {
+        const input = "2019-01-22T23:48:21.839Z";
+
+        const output = utils.parseDate(input);
+
+        assert.equal(output.toISOString(), new Date("2019-01-22T23:48:21.839Z").toISOString());
+    });
+});
+
+describe("formatDate", function() {
+    it("should properly format date to DD/MM/YYYY format", function() {
+        const input = new Date("2019-01-22T23:48:21.839Z");
+
+        const output = utils.formatDate(input)
+
+        assert.equal(output, "22/01/2019");
+    });
+});
+
+describe("formatDateTime", function() {
+    it("should properly format date to DD/MM/YYY HH:MM format", function() {
+        const input = new Date("2019-01-22T23:48:21.839Z");
+        const currentLocalHour = input.getHours();
+
+        const output = utils.formatDateTime(input)
+
+        assert.equal(output, `22/01/2019 ${currentLocalHour}:48`);
+    })
+})
+
 describe("receiveNotification", function() {
     this.timeout(3000);
     it("should go to reports overview page after 1 sec if notification on background", async () => {

@@ -1,5 +1,6 @@
-import { getAPI, formatHouse, postAPI } from "../utils";
+import { getAPI, formatDate, formatDateTime, formatHouse, parseDate, postAPI } from "../utils";
 import { EventData, Page } from "tns-core-modules/ui/page/page";
+import * as application from "tns-core-modules/application";
 import { fromObject } from "tns-core-modules/data/observable/observable";
 import * as utils from "tns-core-modules/utils/utils";
 import { topmost } from "tns-core-modules/ui/frame/frame";
@@ -23,10 +24,10 @@ export async function loadReport(args: EventData) {
     const source = fromObject({
         report: null,
         title: "Relatório ...",
-        formattedInitialDate: '',
-        formattedFinalDate: '',
         formatHouse: formatHouse
     })
+    application.getResources().formatDate = (date: string) => { return formatDate(parseDate(date)); }
+    application.getResources().formatDateTime = (date: string) => { return formatDateTime(parseDate(date)); };
     page.bindingContext = source;
     return await getAPI(`relatorios/${context_info.reportId}`, (data) => {
         if (data.statusCode != 200)
@@ -36,12 +37,8 @@ export async function loadReport(args: EventData) {
         report.eventos_ausentes_filtered = report.eventos_ausentes.filter((e) => e.presenca != 'Ausência esperada');
         const initialDate = new Date(Date.parse(report.data_inicial))
         const finalDate = new Date(Date.parse(report.data_final))
-        const formattedInitialDate = ("0" + initialDate.getDate()).slice(-2)  + "/" + ("0" + (initialDate.getMonth()+1)).slice(-2) + "/" + initialDate.getFullYear();
-        const formattedFinalDate = ("0" + finalDate.getDate()).slice(-2)  + "/" + ("0" + (finalDate.getMonth()+1)).slice(-2) + "/" + finalDate.getFullYear();
         source.set("report", report);
-        source.set("title", 'Relatório | ' + report.parlamentar.nome + ' | ' + formattedInitialDate + ' - ' + formattedFinalDate);
-        source.set('formattedInitialDate', formattedInitialDate);
-        source.set('formattedFinalDate', formattedFinalDate);
+        source.set("title", 'Relatório | ' + report.parlamentar.nome + ' | ' + formatDate(initialDate) + ' - ' + formatDate(finalDate));
         modal.closeModal();
     });
 }

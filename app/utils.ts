@@ -86,6 +86,18 @@ export function formatHouse(house: string): string {
     return "vereador";
 }
 
+export function parseDate(date: string): Date {
+    return new Date(Date.parse(date));
+}
+
+export function formatDate(date: Date): string {
+    return ("0" + date.getDate()).slice(-2)  + "/" + ("0" + (date.getMonth()+1)).slice(-2) + "/" + date.getFullYear();
+}
+
+export function formatDateTime(date: Date): string {
+    return ("0" + date.getDate()).slice(-2)  + "/" + ("0" + (date.getMonth()+1)).slice(-2) + "/" + date.getFullYear() + " " + ("0" + (date.getHours())).slice(-2) + ":" + ("0" + (date.getMinutes())).slice(-2);
+}
+
 export async function receiveNotification(message: Message) {
     const goToReportOverview = () => {
         const reportsInfoRaw = message.data.reports;

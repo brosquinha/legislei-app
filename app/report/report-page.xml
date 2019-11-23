@@ -16,7 +16,7 @@
                     <Image col="0" row="0" src="{{ report.parlamentar.foto }}" height="150" stretch="aspectFit" loadMode="async" />
                     <StackLayout col="1" row="0">
                         <Label class="h2 m-5" textWrap="true" text="{{ report.parlamentar.nome + ' (' + report.parlamentar.partido + ' - '+ report.parlamentar.uf + ')' }}"></Label>
-                        <Label class="h2 m-5" textWrap="true" text="{{ formattedInitialDate + ' - ' + formattedFinalDate }}"></Label>
+                        <Label class="h2 m-5" textWrap="true" text="{{ formatDate(report.data_inicial) + ' - ' + formatDate(report.data_final) }}"></Label>
                         <Label class="h3 m-5 text-capitalize" textWrap="true" text="{{ formatHouse(report.parlamentar.casa) }}"></Label>
                         <Label class="h3 m-5" textWrap="true" text="{{ 'Presença: ' + report.presenca_relativa }}"></Label>
                     </StackLayout>
@@ -49,10 +49,11 @@
                     text="Sem proposições nesse período"
                     textWrap="true"
                     visibility="{{ (!report.proposicoes.length) ? 'visible' : 'collapsed' }}"></Label>
-                <ListView items="{{ report.proposicoes }}" height="auto">
+                <ListView items="{{ report.proposicoes }}" height="auto" itemTemplateSelector="$index">
                     <ListView.itemTemplate>
                         <StackLayout onTap="openProposition" data-url="{{ url_documentos }}">
                             <Label text="{{ tipo + '-' + numero }}" class="m-5 h3" textWrap="true"></Label>
+                            <Label text="{{ data_submissao, data_submissao | formatDateTime }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ ementa }}" class="m-5" textWrap="true"></Label>
                         </StackLayout>
                     </ListView.itemTemplate>
@@ -70,6 +71,7 @@
                     <ListView.itemTemplate>
                         <StackLayout onTap="showEventDetails" data-id="{{ id }}">
                             <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ data_inicial, formatDateTime(data_inicial) + ' - ' + formatDateTime(data_final) }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ (pautas.length) ? 'Clique para mais informações' : 'Evento sem pauta' }}" class="m-5" textWrap="true"></Label>
@@ -89,6 +91,7 @@
                     <ListView.itemTemplate>
                         <StackLayout onTap="showFullEventTitle">
                             <Label text="{{ nome }}" class="m-5 h3"></Label>
+                            <Label text="{{ data_inicial, formatDateTime(data_inicial) + ' - ' + formatDateTime(data_final) }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ situacao }}" class="m-5" textWrap="true"></Label>
                             <Label text="{{ orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
                         </StackLayout>

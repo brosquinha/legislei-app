@@ -252,15 +252,15 @@ describe("showEventDetails", function() {
             eventName: "test",
             object: fakePage
         };
-        const fakeAlert = sinon.fake();
-        sinon.replace(dialogs, "alert", fakeAlert);
+        const fakeConfirm = sinon.fake();
+        sinon.replace(dialogs, "confirm", fakeConfirm);
         sinon.replace(topmost(), 'navigate', sinon.fake());
         const navigateFake: any = topmost().navigate;
 
         report.showEventDetails(fakeEvent);
 
         assert.isFalse(navigateFake.called);
-        assert.isTrue(fakeAlert.calledWith("Evento sem pauta"));
+        assert.isTrue(fakeConfirm.called);
         sinon.restore();
     });
 });
