@@ -60,6 +60,8 @@ export class LoginViewModel extends Observable {
     }
 
     registerAccount(_args: EventData) {
-        alert("Tela em construção")
+        topmost().navigate({
+            moduleName: "sign-up/sign-up-page",
+        });
     }
 }

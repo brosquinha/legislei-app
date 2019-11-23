@@ -1,0 +1,54 @@
+<Page class="Page" loaded="onLoaded">
+    <ActionBar title="Criar conta" class="action-bar">
+    </ActionBar>
+
+    <StackLayout class="form">
+        <StackLayout class="input-field">
+            <TextField
+                id="usernameField"
+                autocorrect="false"
+                hint="Username"
+                text="{{ username }}"
+                returnKeyType="next" />
+        </StackLayout>
+
+        <StackLayout class="input-field">
+            <TextField
+                id="emailField"
+                autocorrect="false"
+                hint="Email"
+                text="{{ email }}"
+                keyboardType="email"
+                returnKeyType="next" />
+        </StackLayout>
+
+        <StackLayout class="input-field">
+            <TextField
+                secure="true"
+                hint="Password"
+                id="passwordField"
+                autocorrect="false"
+                returnKeyType="next"
+                text="{{ password }}" />
+        </StackLayout>
+
+        <StackLayout class="input-field">
+            <TextField
+                secure="true"
+                hint="Confirm password"
+                id="passwordConfirmField"
+                autocorrect="false"
+                returnKeyType="done"
+                text="{{ confirmedPassword }}" />
+        </StackLayout>
+
+        <StackLayout>
+            <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+            <Button
+                class="btn btn-primary btn-active"
+                text="Criar conta"
+                tap="registerAccount"
+                visibility="{{ (isLoading) ? 'collapsed' : 'visible' }}" />
+        </StackLayout>
+    </StackLayout>
+</Page>
