@@ -136,6 +136,59 @@ describe("postAPI", function() {
     });
 });
 
+describe("deleteAPI", function() {
+    it("should call API with DELETE method", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 200,
+            content: {toJSON: () => {return {message: "Ok"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        const callback = sinon.fake();
+
+        await utils.deleteAPI("/test", callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isTrue(callback.called);
+        sinon.restore();
+    });
+
+    it("should remove userToken when API responds with 401", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 401,
+            content: {toJSON: () => {return {message: "Unauthorized"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+        const callback = sinon.fake();
+
+        await utils.deleteAPI("/test", callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isFalse(callback.called);
+        assert.isNull(secureStorage.getSync({
+            key: "userToken",
+        }));
+        assert.isTrue(navigateFake.calledWithMatch({
+            moduleName: "login/login-page",
+            clearHistory: true
+        }));
+        sinon.restore();
+    });
+});
+
 describe("formatHouse", function() {
     it("should return deputado federal when input is BR1", function() {
         const input = 'BR1';

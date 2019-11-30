@@ -51,6 +51,22 @@ export async function postAPI(path: string, body: object, callback: any, method=
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
+export async function deleteAPI(path: string, callback: any) {
+    const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
+    const secureStorage = new SecureStorage();
+    const userToken = secureStorage.getSync({
+        key: "userToken",
+    });
+    return await request({
+        url: `${serverURI}${path}`,
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": userToken,
+        }
+    }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
+}
+
 export function ensureLoginDecorator(response: HttpResponse, callback: CallableFunction) {
     const secureStorage = new SecureStorage();
     if (response.statusCode == 401) {
