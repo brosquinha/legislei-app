@@ -18,26 +18,30 @@
                     textWrap="true" />
                 <Label
                     class="h3 m-5"
-                    visibility="{{ (loveCount) ? 'visible' : 'collapsed' }}"
-                    text="{{ loveCount + ' atividades que adorei ❤️' }}"
+                    visibility="{{ (loveRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ loveRatings.length + ' atividades que adorei ❤️' }}"
                     textWrap="true" />
                 <Label
                     class="h3 m-5"
-                    visibility="{{ (likeCount) ? 'visible' : 'collapsed' }}"
-                    text="{{ likeCount + ' atividades que curti 👍' }}"
+                    visibility="{{ (likeRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ likeRatings.length + ' atividades que curti 👍' }}"
                     textWrap="true" />
                 <Label
                     class="h3 m-5"
-                    visibility="{{ (dislikeCount) ? 'visible' : 'collapsed' }}"
-                    text="{{ dislikeCount + ' atividades que não curti 👎' }}"
+                    visibility="{{ (dislikeRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ dislikeRatings.length + ' atividades que não curti 👎' }}"
                     textWrap="true" />
                 <Label
                     class="h3 m-5"
-                    visibility="{{ (hateCount) ? 'visible' : 'collapsed' }}"
-                    text="{{ hateCount + ' atividades que detestei 💀' }}"
+                    visibility="{{ (hateRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ hateRatings.length + ' atividades que detestei 💀' }}"
                     textWrap="true" />
             </StackLayout>
         </FlexboxLayout>
-        <Button class="btn btn-primary btn-active" text="Ver atividades avaliadas" onTap="goToAssemblymanRatings" />
+        <Button
+            class="btn btn-primary btn-active"
+            text="Ver atividades avaliadas"
+            onTap="goToAssemblymanRatings"
+            visibility="{{ (generalFeeling) ? 'visible' : 'collapsed' }}"/>
     </StackLayout>
 </Page>

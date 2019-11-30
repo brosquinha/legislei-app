@@ -13,10 +13,10 @@ export async function loadRatings(args: EventData) {
         title: `Minhas avaliações de ${context_info.nome}`,
         formatHouse: formatHouse,
         overallScore: 'Carregando...',
-        loveCount: 0,
-        likeCount: 0,
-        dislikeCount: 0,
-        hateCount: 0,
+        loveRatings: 0,
+        likeRatings: 0,
+        dislikeRatings: 0,
+        hateRatings: 0,
         generalFeeling: null,
         ...context_info
     });
@@ -27,24 +27,24 @@ export async function loadRatings(args: EventData) {
         }
         const ratings: Array<any> = response.content.toJSON();
         let overallScore: number = 0;
-        let likeCount: number = 0
-        let dislikeCount: number = 0;
-        let loveCount: number = 0;
-        let hateCount: number = 0;
+        let likeRatings: Array<any> = [];
+        let dislikeRatings: Array<any> = [];
+        let loveRatings: Array<any> = [];
+        let hateRatings: Array<any> = [];
         ratings.forEach((rating) => {
             const score = parseInt(rating.avaliacao);
             if (score == 1) {
                 overallScore++;
-                likeCount++;
+                likeRatings.push(rating);
             } else if (score == -1) {
                 overallScore--;
-                dislikeCount++;
+                dislikeRatings.push(rating);
             } else if (score > 1) {
                 overallScore += 10;
-                loveCount++;
+                loveRatings.push(rating);
             } else if (score < -1) {
                 overallScore -= 10;
-                hateCount++;
+                hateRatings.push(rating);
             }
         });
         let generalFeeling: string;
@@ -56,18 +56,27 @@ export async function loadRatings(args: EventData) {
             generalFeeling = "Você está reprovando a atuação desse parlamentar 🙁";
         } else if (overallScore < -10) {
             generalFeeling = "Você está rejeitando a atuação desse parlamentar ☠️";
-        } else if (loveCount + likeCount + dislikeCount + hateCount) {
+        } else if (loveRatings.length + likeRatings.length + dislikeRatings.length + hateRatings.length) {
             generalFeeling = "Você não tem um veredito sobre esse parlamentar ainda";
         } else {
             generalFeeling = "Você ainda não avaliou nenhuma atividade desse parlamentar";
         }
         source.set("overallScore", overallScore);
-        source.set("loveCount", loveCount);
-        source.set("likeCount", likeCount);
-        source.set("dislikeCount", dislikeCount);
-        source.set("hateCount", hateCount);
+        source.set("loveRatings", loveRatings);
+        source.set("likeRatings", likeRatings);
+        source.set("dislikeRatings", dislikeRatings);
+        source.set("hateRatings", hateRatings);
         source.set("generalFeeling", generalFeeling);
     })
+}
+
+export function goToAssemblymanRatings(args: EventData): void {
+    const page = <Page>args.object;
+    topmost().navigate({
+        moduleName: "ratings/ratings-details-page",
+        context: page.bindingContext,
+        backstackVisible: true
+    });
 }
 
 export function goBackTo(args: EventData): void {

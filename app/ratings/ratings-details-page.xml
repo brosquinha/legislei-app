@@ -1,0 +1,80 @@
+<Page class="Page" loaded="onLoaded">
+    <ActionBar title="{{ title }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <TabView tabTextColor="white" selectedTabTextColor="white">
+        <TabViewItem title="Adorei">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Nenhuma atividade avaliada como Amei"
+                    textWrap="true"
+                    visibility="{{ (!loveRatings.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ loveRatings }}">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showItemOptions">
+                            <Label text="{{ item_avaliado.nome || item_avaliado.tipo + '-' + item_avaliado.numero }}" class="h3 m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.dataSubmissao || item_avaliado.dataApresentacao || item_avaliado.dataInicial + ' - ' + item_avaliado.dataFinal }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.ementa || item_avaliado.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Curti">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Nenhuma atividade avaliada como Curti"
+                    textWrap="true"
+                    visibility="{{ (!likeRatings.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ likeRatings }}">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showItemOptions">
+                            <Label text="{{ item_avaliado.nome || item_avaliado.tipo + '-' + item_avaliado.numero }}" class="h3 m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.dataSubmissao || item_avaliado.dataApresentacao || item_avaliado.dataInicial + ' - ' + item_avaliado.dataFinal }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.ementa || item_avaliado.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Não curti">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Nenhuma atividade avaliada como Não curti"
+                    textWrap="true"
+                    visibility="{{ (!dislikeRatings.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ dislikeRatings }}">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showItemOptions">
+                            <Label text="{{ item_avaliado.nome || item_avaliado.tipo + '-' + item_avaliado.numero }}" class="h3 m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.dataSubmissao || item_avaliado.dataApresentacao || item_avaliado.dataInicial + ' - ' + item_avaliado.dataFinal }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.ementa || item_avaliado.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+        <TabViewItem title="Detestei">
+            <StackLayout>
+                <Label
+                    class="h2 text-center m-15"
+                    text="Nenhuma atividade avaliada como Detestei"
+                    textWrap="true"
+                    visibility="{{ (!hateRatings.length) ? 'visible' : 'collapsed' }}"></Label>
+                <ListView items="{{ hateRatings }}" height="auto">
+                    <ListView.itemTemplate>
+                        <StackLayout onTap="showItemOptions">
+                            <Label text="{{ item_avaliado.nome || item_avaliado.tipo + '-' + item_avaliado.numero }}" class="h3 m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.dataSubmissao || item_avaliado.dataApresentacao || item_avaliado.dataInicial + ' - ' + item_avaliado.dataFinal }}" class="m-5" textWrap="true"></Label>
+                            <Label text="{{ item_avaliado.ementa || item_avaliado.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
+                        </StackLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </TabViewItem>
+    </TabView>
+</Page>

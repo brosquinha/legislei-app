@@ -42,10 +42,10 @@ describe("loadRatings", function() {
 
             assert.isTrue(fakeRequire.calledOnce);
             assert.equal(fakeBindingContext.get("overallScore"), 0);
-            assert.equal(fakeBindingContext.get("loveCount"), 1);
-            assert.equal(fakeBindingContext.get("likeCount"), 1);
-            assert.equal(fakeBindingContext.get("dislikeCount"), 1);
-            assert.equal(fakeBindingContext.get("hateCount"), 1);
+            assert.equal(fakeBindingContext.get("loveRatings").length, 1);
+            assert.equal(fakeBindingContext.get("likeRatings").length, 1);
+            assert.equal(fakeBindingContext.get("dislikeRatings").length, 1);
+            assert.equal(fakeBindingContext.get("hateRatings").length, 1);
             assert.equal(fakeBindingContext.get("generalFeeling"), "Você não tem um veredito sobre esse parlamentar ainda");
         } catch (e) {
             sinon.restore();
