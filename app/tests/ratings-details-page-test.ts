@@ -1,4 +1,5 @@
 import { fromObject, EventData } from "tns-core-modules/data/observable/observable";
+import * as httpr from "tns-core-modules/http";
 import * as dialogs from "tns-core-modules/ui/dialogs";
 import * as coreUtils from "tns-core-modules/utils/utils";
 
@@ -218,9 +219,87 @@ describe("showItemOptions", function() {
         sinon.restore();
     });
 
-    // it("should delete rating if user chooses to do so", async () => {
+    it("should delete rating and remove it from list if user chooses to do so", async () => {
+        const fakeRatingItem = {
+            "id": "5db62c6dd497790003d8fa2b",
+            "parlamentar": {},
+            "avaliacao": "-1",
+            "item_avaliado": {},
+            "relatorio_id": "5db460c4a1e0dd000302ebdd"
+        }
+        const fakeAction = sinon.fake.resolves("Excluir avaliação");
+        const fakeConfirm = sinon.fake.resolves(true);
+        const fakeRequest = sinon.fake.resolves({statusCode: 200});
+        sinon.replace(dialogs, "action", fakeAction);
+        sinon.replace(dialogs, "confirm", fakeConfirm);
+        sinon.replace(httpr, "request", fakeRequest);
+        const fakePage: any = fromObject(fakeRatingItem);
+        fakePage.bindingContext = fakePage;
+        fakePage.parent = {
+            bindingContext: fromObject({
+                "loveRatings": [{id: "5db460c4a1e0dd000302ebdd"}],
+                "likeRatings": [{id: "5db460c4a1e0dd000302ebdd"}],
+                "dislikeRatings": [{id: "5db62c6dd497790003d8fa2b"}],
+                "hateRatings": [{id: "5db460c4a1e0dd000302ebdd"}]
+            })
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        }
 
-    // });
+        await ratingsDetails.showItemOptions(fakeEvent);
+
+        assert.isTrue(fakeAction.calledOnce);
+        assert.isTrue(fakeConfirm.calledOnce);
+        assert.isTrue(fakeRequest.calledOnce);
+        assert.equal(fakePage.parent.bindingContext.get("loveRatings").length, 1)
+        assert.equal(fakePage.parent.bindingContext.get("likeRatings").length, 1)
+        assert.equal(fakePage.parent.bindingContext.get("dislikeRatings").length, 0)
+        assert.equal(fakePage.parent.bindingContext.get("hateRatings").length, 1)
+        sinon.restore();
+    });
+
+    it("should not delete rating if user click to delete rating but does not confirm it", async () => {
+        const fakeRatingItem = {
+            "id": "5db62c6dd497790003d8fa2b",
+            "parlamentar": {},
+            "avaliacao": "-1",
+            "item_avaliado": {},
+            "relatorio_id": "5db460c4a1e0dd000302ebdd"
+        }
+        const fakeAction = sinon.fake.resolves("Excluir avaliação");
+        const fakeConfirm = sinon.fake.resolves(false);
+        const fakeRequest = sinon.fake.resolves({statusCode: 200});
+        sinon.replace(dialogs, "action", fakeAction);
+        sinon.replace(dialogs, "confirm", fakeConfirm);
+        sinon.replace(httpr, "request", fakeRequest);
+        const fakePage: any = fromObject(fakeRatingItem);
+        fakePage.bindingContext = fakePage;
+        fakePage.parent = {
+            bindingContext: fromObject({
+                "loveRatings": [{id: "5db460c4a1e0dd000302ebdd"}],
+                "likeRatings": [{id: "5db460c4a1e0dd000302ebdd"}],
+                "dislikeRatings": [{id: "5db62c6dd497790003d8fa2b"}],
+                "hateRatings": [{id: "5db460c4a1e0dd000302ebdd"}]
+            })
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        }
+
+        await ratingsDetails.showItemOptions(fakeEvent);
+
+        assert.isTrue(fakeAction.calledOnce);
+        assert.isTrue(fakeConfirm.calledOnce);
+        assert.isFalse(fakeRequest.calledOnce);
+        assert.equal(fakePage.parent.bindingContext.get("loveRatings").length, 1)
+        assert.equal(fakePage.parent.bindingContext.get("likeRatings").length, 1)
+        assert.equal(fakePage.parent.bindingContext.get("dislikeRatings").length, 1)
+        assert.equal(fakePage.parent.bindingContext.get("hateRatings").length, 1)
+        sinon.restore();
+    });
 
     it("should do nothing if user clicks away", async () => {
         const fakeRatingItem = {}

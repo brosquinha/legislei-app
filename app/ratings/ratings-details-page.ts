@@ -3,6 +3,7 @@ import { fromObject } from "tns-core-modules/data/observable/observable";
 import { action, confirm } from "tns-core-modules/ui/dialogs/dialogs";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { openUrl } from "tns-core-modules/utils/utils";
+import { deleteAPI } from "~/utils";
 
 export function onLoaded(args: EventData) {
     const page = <Page>args.object;
@@ -61,8 +62,19 @@ export async function showItemOptions(args: EventData) {
                 message: "Tem certeza de que gostaria de apagar sua avaliações dessa atividade?",
                 okButtonText: "Apagar avaliação",
                 cancelButtonText: "Cancelar"
-            }).then(result => {
-                console.log(result ? "Deletar!" : "Nope");
+            }).then(r => {
+                if (!r)
+                    return
+                deleteAPI(`relatorios/${item.relatorio_id}/avaliacoes/${item.id}`, (response) => {
+                    if (response.statusCode != 200) {
+                        alert(response.content.toJSON().message);
+                    } else {
+                        page.parent.bindingContext.set("loveRatings", page.parent.bindingContext.get("loveRatings").filter(x => x.id != item.id))
+                        page.parent.bindingContext.set("likeRatings", page.parent.bindingContext.get("likeRatings").filter(x => x.id != item.id))
+                        page.parent.bindingContext.set("dislikeRatings", page.parent.bindingContext.get("dislikeRatings").filter(x => x.id != item.id))
+                        page.parent.bindingContext.set("hateRatings", page.parent.bindingContext.get("hateRatings").filter(x => x.id != item.id))
+                    }
+                });
             })
         }
     });
