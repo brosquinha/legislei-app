@@ -111,23 +111,85 @@ describe("onCheckAssemblymanReports", function() {
 });
 
 describe("confirmDelete", function() {
-    it("should for now do nothing when user confirms deletion", async () => {
+    it("should delete subscription item and remove it from list when user confirms deletion", async () => {
         const confirmFake = sinon.fake.resolves(true);
         sinon.replace(dialogs, "confirm", confirmFake);
+        const requireFake = sinon.fake.resolves({
+            statusCode: 200
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.bindingContext = {
+            'casa': 'BR1',
+            'id': '2'
+        }
+        fakePage.page = {
+            bindingContext: fromObject({
+                subscriptions: {
+                    parlamentares: [
+                        {id: '1'},
+                        {id: '2'},
+                        {id: '3'},
+                    ]
+                }
+            })
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
 
-        await home.confirmDelete(null);
+        try {
+            await home.confirmDelete(fakeEvent);
 
-        assert.isTrue(confirmFake.called);
+            assert.isTrue(confirmFake.called);
+            assert.isTrue(requireFake.called);
+            assert.equal(fakePage.page.bindingContext.get('subscriptions').parlamentares.length, 2);
+        } catch (e) {
+            sinon.restore();
+            throw e;
+        }
         sinon.restore();
     });
     
-    it("should for now do nothing when user cancels deletion", async () => {
+    it("should do nothing when user cancels deletion", async () => {
         const confirmFake = sinon.fake.resolves(false);
         sinon.replace(dialogs, "confirm", confirmFake);
+        const requireFake = sinon.fake.resolves({
+            statusCode: 200
+        });
+        sinon.replace(httpr, 'request', requireFake);
+        const fakePage: any = fromObject({});
+        fakePage.bindingContext = {
+            'casa': 'BR1',
+            'id': '2'
+        }
+        fakePage.page = {
+            bindingContext: fromObject({
+                subscriptions: {
+                    parlamentares: [
+                        {id: '1'},
+                        {id: '2'},
+                        {id: '3'},
+                    ]
+                }
+            })
+        }
+        const fakeEvent: EventData = {
+            eventName: "test",
+            object: fakePage
+        };
 
-        await home.confirmDelete(null);
+        try {
+            await home.confirmDelete(fakeEvent);
 
-        assert.isTrue(confirmFake.called);
+            assert.isTrue(confirmFake.called);
+            assert.isFalse(requireFake.called);
+            assert.equal(fakePage.page.bindingContext.get('subscriptions').parlamentares.length, 3);
+        } catch (e) {
+            sinon.restore();
+            throw e;
+        }
         sinon.restore();
     });
 });
