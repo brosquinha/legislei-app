@@ -13,7 +13,7 @@
                         <GridLayout columns="2*, *" margin="3" style="padding: 10px">
                             <StackLayout col="0">
                                 <Label class="h2" text="{{ nome + ' (' + partido + '-' + uf + ')' }}" textWrap="true" />
-                                <Button class="btn btn-primary btn-active" text="Minhas avaliações" />
+                                <Button class="btn btn-primary btn-active" text="Minhas avaliações" onTap="goToAssemblymanRatings" />
                                 <Button
                                     class="btn btn-outline btn-active"
                                     text="Últimos relatórios"

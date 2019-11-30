@@ -39,6 +39,16 @@ export function onCheckAssemblymanReports(args: EventData): void {
     });
 }
 
+export function goToAssemblymanRatings(args: EventData): void {
+    const page = <Page>args.object;
+    const assemblyman = page.bindingContext;
+    topmost().navigate({
+        moduleName: "ratings/ratings-page",
+        backstackVisible: true,
+        context: assemblyman
+    });
+}
+
 export async function confirmDelete(args: EventData) {
     return await confirm({
         title: "Deletar inscrição",
