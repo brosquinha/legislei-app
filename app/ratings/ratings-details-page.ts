@@ -79,3 +79,7 @@ export async function showItemOptions(args: EventData) {
         }
     });
 }
+
+export function goBackTo(args: EventData): void {
+    topmost().goBack();
+}

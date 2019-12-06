@@ -21,7 +21,7 @@ export async function loadRatings(args: EventData) {
         ...context_info
     });
     page.bindingContext = source;
-    return await getAPI(`parlamentares/${context_info.casa}/${context_info.id}/avaliacoes`, (response) => {
+    return await getAPI(`parlamentares/${encodeURIComponent(context_info.casa)}/${context_info.id}/avaliacoes`, (response) => {
         if (response.statusCode != 200) {
             return alert("Não foi possível buscar suas avaliações desse parlamentar");
         }
