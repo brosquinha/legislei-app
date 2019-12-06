@@ -136,6 +136,130 @@ describe("postAPI", function() {
     });
 });
 
+describe("deleteAPI", function() {
+    it("should call API with DELETE method", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 200,
+            content: {toJSON: () => {return {message: "Ok"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        const callback = sinon.fake();
+
+        await utils.deleteAPI("/test", callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isTrue(callback.called);
+        sinon.restore();
+    });
+
+    it("should remove userToken when API responds with 401", async () => {
+        const secureStorage = new SecureStorage();
+        secureStorage.setSync({
+            key: "userToken",
+            value: "token"
+        });
+        const requireFakeResponse = {
+            statusCode: 401,
+            content: {toJSON: () => {return {message: "Unauthorized"}}}
+        }
+        const requireFake = sinon.fake.resolves(requireFakeResponse);
+        sinon.replace(httpr, 'request', requireFake);
+        sinon.replace(topmost(), 'navigate', sinon.fake());
+        const navigateFake: any = topmost().navigate;
+        const callback = sinon.fake();
+
+        await utils.deleteAPI("/test", callback);
+
+        assert.isTrue(requireFake.called);
+        assert.isFalse(callback.called);
+        assert.isNull(secureStorage.getSync({
+            key: "userToken",
+        }));
+        assert.isTrue(navigateFake.calledWithMatch({
+            moduleName: "login/login-page",
+            clearHistory: true
+        }));
+        sinon.restore();
+    });
+});
+
+describe("formatHouse", function() {
+    it("should return deputado federal when input is BR1", function() {
+        const input = 'BR1';
+
+        const output = utils.formatHouse(input);
+
+        assert.equal(output, "deputado federal");
+    });
+
+    it("should return senador when input is BR2", function() {
+        const input = 'BR2';
+
+        const output = utils.formatHouse(input);
+
+        assert.equal(output, "senador");
+    });
+
+    it("should return deputado estadual when input is two characters long", function() {
+        const input1 = 'SP';
+        const input2 = 'BA';
+
+        const output1 = utils.formatHouse(input1);
+        const output2 = utils.formatHouse(input2);
+
+        assert.equal(output1, "deputado estadual");
+        assert.equal(output2, "deputado estadual");
+    });
+
+    it("should return vereador when input is longer than two characters long", function() {
+        const input1 = 'São Paulo';
+        const input2 = 'Manaus';
+
+        const output1 = utils.formatHouse(input1);
+        const output2 = utils.formatHouse(input2);
+
+        assert.equal(output1, "vereador");
+        assert.equal(output2, "vereador");
+    });
+});
+
+describe("parseDate", function() {
+    it("should return a valid Date object", function() {
+        const input = "2019-01-22T23:48:21.839Z";
+
+        const output = utils.parseDate(input);
+
+        assert.equal(output.toISOString(), new Date("2019-01-22T23:48:21.839Z").toISOString());
+    });
+});
+
+describe("formatDate", function() {
+    it("should properly format date to DD/MM/YYYY format", function() {
+        const input = new Date("2019-01-22T23:48:21.839Z");
+
+        const output = utils.formatDate(input)
+
+        assert.equal(output, "22/01/2019");
+    });
+});
+
+describe("formatDateTime", function() {
+    it("should properly format date to DD/MM/YYY HH:MM format", function() {
+        const input = new Date("2019-01-22T23:48:21.839Z");
+        const currentLocalHour = input.getHours();
+
+        const output = utils.formatDateTime(input)
+
+        assert.equal(output, `22/01/2019 ${currentLocalHour}:48`);
+    })
+})
+
 describe("receiveNotification", function() {
     this.timeout(3000);
     it("should go to reports overview page after 1 sec if notification on background", async () => {

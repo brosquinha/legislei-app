@@ -3,7 +3,7 @@ import { Page } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
-import { getAPI, ensureLoginDecorator, subscribeToPushNotifications } from "../utils";
+import { getAPI, ensureLoginDecorator, subscribeToPushNotifications, deleteAPI } from "../utils";
 
 export async function onPageLoaded(args: EventData) {
     const page = <Page>args.object;
@@ -39,14 +39,37 @@ export function onCheckAssemblymanReports(args: EventData): void {
     });
 }
 
+export function goToAssemblymanRatings(args: EventData): void {
+    const page = <Page>args.object;
+    const assemblyman = page.bindingContext;
+    topmost().navigate({
+        moduleName: "ratings/ratings-page",
+        backstackVisible: true,
+        context: assemblyman
+    });
+}
+
 export async function confirmDelete(args: EventData) {
+    const page = <Page>args.object;
+    const assemblyman = page.bindingContext;
     return await confirm({
         title: "Deletar inscrição",
         message: "Tem certeza de que gostaria de deixar de seguir esse parlamentar?",
         okButtonText: "Remover inscrição",
         cancelButtonText: "Cancelar"
     }).then(result => {
-        console.log(result ? "Deletar!" : "Nope");
+        if (!result)
+            return
+        deleteAPI(`usuarios/inscricoes/${assemblyman.casa}/${assemblyman.id}`, response => {
+            if (response.statusCode != 200) {
+                alert(response.content.toJSON().message);
+            } else {
+                const subscriptions = page.page.bindingContext.get("subscriptions");
+                page.page.bindingContext.set("subscriptions", []); // possible TNS bug? Without this line, view will not refresh
+                subscriptions.parlamentares = subscriptions.parlamentares.filter(x => x.id != assemblyman.id);
+                page.page.bindingContext.set("subscriptions", subscriptions);
+            }
+        });
     });
 }
 

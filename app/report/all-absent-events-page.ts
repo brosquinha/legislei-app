@@ -1,9 +1,11 @@
 import { EventData, Page } from "tns-core-modules/ui/page/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { fromObject } from "tns-core-modules/data/observable/observable";
-
+import * as application from "tns-core-modules/application";
 import * as dialog from "tns-core-modules/ui/dialogs";
+
 import { rateItem } from "./report-page";
+import { formatDateTime, parseDate } from "../utils";
 
 export function loadEvents(args: EventData) {
     const page = <Page>args.object;
@@ -11,6 +13,7 @@ export function loadEvents(args: EventData) {
     const source = fromObject({
         events: context_info
     })
+    application.getResources().formatDateTime = (date: string) => { return formatDateTime(parseDate(date)); };
     page.bindingContext = source;
 }
 

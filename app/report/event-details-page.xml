@@ -3,9 +3,10 @@
         <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
     </ActionBar>
     <StackLayout>
-        <GridLayout columns="2*, *" margin="3" height="100">
+        <GridLayout columns="2*, *" margin="3" height="150">
             <StackLayout col="0">
                 <Label text="{{ event.nome }}" class="m-5 h2" textWrap="false" onTap="showFullEventTitle"></Label>
+                <Label text="{{ event.data_inicial, formatDateTime(event.data_inicial) + ' - ' + formatDateTime(event.data_final) }}" class="m-5" textWrap="true"></Label>
                 <Label text="{{ event.situacao }}" class="m-5" textWrap="true"></Label>
                 <Label text="{{ event.orgaos[0].apelido }}" class="m-5" textWrap="true"></Label>
             </StackLayout>

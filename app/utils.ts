@@ -51,6 +51,22 @@ export async function postAPI(path: string, body: object, callback: any, method=
     }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
 }
 
+export async function deleteAPI(path: string, callback: any) {
+    const serverURI: String = applicationSettings.getString("serverURI", environment.apiEndpoint);
+    const secureStorage = new SecureStorage();
+    const userToken = secureStorage.getSync({
+        key: "userToken",
+    });
+    return await request({
+        url: `${serverURI}${path}`,
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": userToken,
+        }
+    }).then(r => ensureLoginDecorator(r, callback), (e) => alert(e.message));
+}
+
 export function ensureLoginDecorator(response: HttpResponse, callback: CallableFunction) {
     const secureStorage = new SecureStorage();
     if (response.statusCode == 401) {
@@ -84,6 +100,18 @@ export function formatHouse(house: string): string {
     else if (house.length == 2)
         return "deputado estadual";
     return "vereador";
+}
+
+export function parseDate(date: string): Date {
+    return new Date(Date.parse(date));
+}
+
+export function formatDate(date: Date): string {
+    return ("0" + date.getDate()).slice(-2)  + "/" + ("0" + (date.getMonth()+1)).slice(-2) + "/" + date.getFullYear();
+}
+
+export function formatDateTime(date: Date): string {
+    return ("0" + date.getDate()).slice(-2)  + "/" + ("0" + (date.getMonth()+1)).slice(-2) + "/" + date.getFullYear() + " " + ("0" + (date.getHours())).slice(-2) + ":" + ("0" + (date.getMinutes())).slice(-2);
 }
 
 export async function receiveNotification(message: Message) {

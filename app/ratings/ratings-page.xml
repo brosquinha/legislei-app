@@ -1,0 +1,47 @@
+<Page class="Page" loaded="loadRatings">
+    <ActionBar title="{{ title }}" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <StackLayout>
+        <FlexboxLayout flexWrap="wrap" justifyContent="center">
+            <StackLayout alignSelf="center" class="m-r-30 text-center"><!-- style="background-color: #f8f9fa"-->
+                <Label class="h1" text="{{ nome + ' (' + partido + '-' + uf + ')' }}" textWrap="true" />
+                <Image src="{{ foto }}" height="200" stretch="aspectFit" loadMode="async" />
+                <Label class="h2 text-capitalize" text="{{ formatHouse(casa) }}" textWrap="true" />
+            </StackLayout>
+            <StackLayout alignSelf="center">
+                <Label class="h1" text="{{ 'Pontuação: ' + overallScore }}" textWrap="true" />
+                <Label
+                    class="h2 m-5"
+                    text="{{ generalFeeling }}"
+                    textWrap="true" />
+                <Label
+                    class="h3 m-5"
+                    visibility="{{ (loveRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ loveRatings.length + ' atividades que adorei ❤️' }}"
+                    textWrap="true" />
+                <Label
+                    class="h3 m-5"
+                    visibility="{{ (likeRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ likeRatings.length + ' atividades que curti 👍' }}"
+                    textWrap="true" />
+                <Label
+                    class="h3 m-5"
+                    visibility="{{ (dislikeRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ dislikeRatings.length + ' atividades que não curti 👎' }}"
+                    textWrap="true" />
+                <Label
+                    class="h3 m-5"
+                    visibility="{{ (hateRatings.length) ? 'visible' : 'collapsed' }}"
+                    text="{{ hateRatings.length + ' atividades que detestei 💀' }}"
+                    textWrap="true" />
+            </StackLayout>
+        </FlexboxLayout>
+        <Button
+            class="btn btn-primary btn-active"
+            text="Ver atividades avaliadas"
+            onTap="goToAssemblymanRatings"
+            visibility="{{ (generalFeeling) ? 'visible' : 'collapsed' }}"/>
+    </StackLayout>
+</Page>
