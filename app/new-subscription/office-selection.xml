@@ -1,0 +1,10 @@
+<Page class="Page" loaded="onLoaded">
+    <ActionBar title="Nova inscrição" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <StackLayout>
+        <ListPicker items="{{ offices }}" loaded="onListPickerLoaded" />
+        <Button class="btn btn-primary" text="Próximo" onTap="goToHouseSelection" />
+    </StackLayout>
+</Page>

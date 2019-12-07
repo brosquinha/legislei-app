@@ -1,5 +1,5 @@
 import { EventData, fromObject } from "tns-core-modules/data/observable";
-import { Page } from "tns-core-modules/ui/page";
+import { Page, ShowModalOptions } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
@@ -74,7 +74,17 @@ export async function confirmDelete(args: EventData) {
 }
 
 export function newSubscription(args: EventData) {
-    return alert("Tela em construção")
+    // const page = <Page>args.object;
+    // const modalOptions: ShowModalOptions = {
+    //     context: {},
+    //     closeCallback: null,
+    //     fullscreen: true
+    // }
+    // const modal = page.showModal("new-subscription/office-selection", modalOptions);
+    topmost().navigate({
+        moduleName: "new-subscription/office-selection",
+        backstackVisible: true
+    });
 }
 
 export async function confirmLogout(args: EventData) {
