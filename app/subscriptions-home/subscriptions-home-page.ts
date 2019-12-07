@@ -74,17 +74,16 @@ export async function confirmDelete(args: EventData) {
 }
 
 export function newSubscription(args: EventData) {
-    // const page = <Page>args.object;
-    // const modalOptions: ShowModalOptions = {
-    //     context: {},
-    //     closeCallback: null,
-    //     fullscreen: true
-    // }
-    // const modal = page.showModal("new-subscription/office-selection", modalOptions);
-    topmost().navigate({
-        moduleName: "new-subscription/office-selection",
-        backstackVisible: true
-    });
+    const page = <Page>args.object;
+    const modalOptions: ShowModalOptions = {
+        context: {},
+        closeCallback: () => topmost().navigate({
+            moduleName: "subscriptions-home/subscriptions-home-page",
+            clearHistory: true
+        }),
+        fullscreen: true
+    }
+    page.showModal("new-subscription/modal-root", modalOptions);
 }
 
 export async function confirmLogout(args: EventData) {

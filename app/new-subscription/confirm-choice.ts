@@ -2,6 +2,7 @@ import { EventData, Page } from "tns-core-modules/ui/page/page";
 import { fromObject } from "tns-core-modules/data/observable/observable";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { formatHouse, postAPI } from "~/utils";
+import { closeCallback } from "./modal-root";
 
 export function onLoaded(args: EventData) {
     const page = <Page>args.object;
@@ -25,11 +26,12 @@ export async function choiceConfirmed(args: EventData) {
             if (response.statusCode != 201) {
                 return alert("Não foi possível fazer a inscrição");
             }
-            topmost().navigate({
-                moduleName: "subscriptions-home/subscriptions-home-page",
-                clearHistory: true
-            });
+            closeCallback(args);
         });
+}
+
+export function closeModal(args) {
+    args.object.closeModal();
 }
 
 export function goBackTo(args: EventData): void {

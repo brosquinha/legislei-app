@@ -48,6 +48,15 @@ export function goToHouseSelection(args: EventData): void {
     }
 }
 
+export function onShownModally(args) {
+    console.log(args.context)
+    console.log(args.closeCallback)
+}
+
+export function closeModal(args) {
+    args.object.closeModal();
+}
+
 export function goBackTo(args: EventData): void {
     topmost().goBack();
 }

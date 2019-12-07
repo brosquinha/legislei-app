@@ -1,10 +1,12 @@
-<Page class="Page" loaded="onLoaded">
-    <ActionBar title="Nova inscrição" class="action-bar">
-        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+<Page class="Page" loaded="onLoaded" shownModally="onShownModally">
+    <ActionBar title="Nova inscrição - 1/4" class="action-bar">
     </ActionBar>
 
-    <StackLayout>
-        <ListPicker items="{{ offices }}" loaded="onListPickerLoaded" />
-        <Button class="btn btn-primary" text="Próximo" onTap="goToHouseSelection" />
-    </StackLayout>
+    <DockLayout stretchLastChild="true">
+        <StackLayout dock="bottom">
+            <Button class="btn btn-primary" text="Próximo" onTap="goToHouseSelection" />
+            <Button class="btn btn-outline" text="Cancelar" onTap="closeModal" />
+        </StackLayout>
+        <ListPicker dock="top" items="{{ offices }}" loaded="onListPickerLoaded" />
+    </DockLayout>
 </Page>

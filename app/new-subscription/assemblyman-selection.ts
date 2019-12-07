@@ -24,7 +24,6 @@ export async function loadAssemblymen(args: EventData) {
             return alert("Não foi possível obter os parlamentares da casa selecionada");
         }
         const allAssemblymen = response.content.toJSON();
-        console.log(allAssemblymen)
         source.set("assemblymen", allAssemblymen);
         source.set("visibleAssemblymen", allAssemblymen);
         source.set("isLoading", false);
@@ -57,6 +56,10 @@ export function goToConfirmation(args: EventData) {
             name: "slideLeft"
         }
     });
+}
+
+export function closeModal(args) {
+    args.object.closeModal();
 }
 
 export function goBackTo(args: EventData): void {
