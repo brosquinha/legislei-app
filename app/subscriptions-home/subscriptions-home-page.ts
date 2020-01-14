@@ -60,7 +60,7 @@ export async function confirmDelete(args: EventData) {
     }).then(result => {
         if (!result)
             return
-        deleteAPI(`usuarios/inscricoes/${assemblyman.casa}/${assemblyman.id}`, response => {
+        deleteAPI(`usuarios/inscricoes/${encodeURIComponent(assemblyman.casa)}/${assemblyman.id}`, response => {
             if (response.statusCode != 200) {
                 alert(response.content.toJSON().message);
             } else {
