@@ -8,7 +8,7 @@ export async function loadAvailableHouses(args: EventData) {
     const page = <Page>args.object;
     const searchBar = <SearchBar>page.getViewById("searchBarField");
     searchBar.android.clearFocus();
-    const context_info = page.navigationContext;
+    const selectedOffice = page.navigationContext;
     if (page.bindingContext) {
         return;
     }
@@ -17,7 +17,6 @@ export async function loadAvailableHouses(args: EventData) {
         houses: [],
         visibleHouses: []
     })
-    const selectedOffice = context_info.get("offices")[context_info.get("selectedOffice")];
     page.bindingContext = source;
     return await getAPI(`casas/${(selectedOffice == 'Vereador' ? 'municipios' : 'estados')}`, response => {
         if (response.statusCode != 200) {
@@ -56,6 +55,10 @@ export function goToAssemblymanSelection(args: EventData) {
             name: "slideLeft"
         }
     });
+}
+
+export function closeModal(args) {
+    args.object.closeModal();
 }
 
 export function goBackTo(args: EventData): void {

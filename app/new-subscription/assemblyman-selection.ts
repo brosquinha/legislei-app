@@ -19,7 +19,7 @@ export async function loadAssemblymen(args: EventData) {
         visibleAssemblymen: []
     })
     page.bindingContext = source;
-    return await getAPI(`parlamentares/${selectedHouse}`, response => {
+    return await getAPI(`parlamentares/${encodeURIComponent(selectedHouse)}`, response => {
         if (response.statusCode != 200) {
             return alert("Não foi possível obter os parlamentares da casa selecionada");
         }

@@ -3,10 +3,15 @@
     </ActionBar>
 
     <DockLayout stretchLastChild="true">
-        <StackLayout dock="bottom">
-            <Button class="btn btn-primary" text="Próximo" onTap="goToHouseSelection" />
-            <Button class="btn btn-outline" text="Cancelar" onTap="closeModal" />
-        </StackLayout>
-        <ListPicker dock="top" items="{{ offices }}" loaded="onListPickerLoaded" />
+        <Button dock="bottom" class="btn btn-outline" text="Cancelar" onTap="closeModal" />
+        <!-- <ListPicker dock="top" items="{{ offices }}" loaded="onListPickerLoaded" /> -->
+        <ListView dock="top" items="{{ offices }}">
+            <ListView.itemTemplate>
+                <Label 
+                    class="h3 text-center m-15" 
+                    text="{{ $value }}"
+                    onTap="goToHouseSelection" />
+            </ListView.itemTemplate>
+        </ListView>
     </DockLayout>
 </Page>
