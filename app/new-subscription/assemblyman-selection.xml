@@ -1,0 +1,22 @@
+<Page class="Page" loaded="loadAssemblymen">
+    <ActionBar title="Nova inscrição - 3/4" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <DockLayout stretchLastChild="true">
+        <Button dock="bottom" class="btn btn-outline" text="Cancelar" onTap="closeModal" />
+        <StackLayout dock="top">
+            <SearchBar id="searchBarField" hint="Pesquisar" submit="filterList" clear="clearFilter" />
+            <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+            <ListView row="0" items="{{ visibleAssemblymen }}" height="1000">
+                <ListView.itemTemplate>
+                    <Label
+                        class="h3 text-center m-15"
+                        text="{{ nome + ' (' + partido + '-' + uf + ')' }}"
+                        data-id="{{ id }}"
+                        onTap="goToConfirmation" />
+                </ListView.itemTemplate>
+            </ListView>
+        </StackLayout>
+    </DockLayout>
+</Page>

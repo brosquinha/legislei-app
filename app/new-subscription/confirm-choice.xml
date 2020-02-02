@@ -1,0 +1,20 @@
+<Page class="Page" loaded="onLoaded">
+    <ActionBar title="Nova inscrição - 4/4" class="action-bar">
+        <NavigationButton text="Back" android.systemIcon="ic_menu_back"  tap="goBackTo"/>
+    </ActionBar>
+
+    <DockLayout stretchLastChild="true">
+        <StackLayout dock="bottom">
+            <Button class="btn btn-primary" text="Acompanhar parlamentar" onTap="choiceConfirmed" />
+            <Button class="btn btn-outline" text="Cancelar" onTap="closeModal" />
+        </StackLayout>
+        <StackLayout dock="top">
+            <ActivityIndicator busy="{{ isLoading }}" height="{{ (isLoading) ? 100 : 0 }}" />
+            <StackLayout visibility="{{ !isLoading ? 'visible' : 'collapsed' }}">
+                <Label text="{{ assemblyman.nome + ' (' + assemblyman.partido + '-' + assemblyman.uf + ')' }}" class="h2 text-center" textWrap="true" />
+                <Image src="{{ assemblyman.foto }}" height="150" stretch="aspectFit" loadMode="async" />
+                <Label text="{{ formatHouse(assemblyman.casa) }}" class="h3 text-center text-capitalize" textWrap="true" />
+            </StackLayout>
+        </StackLayout>
+    </DockLayout>
+</Page>

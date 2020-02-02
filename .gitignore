@@ -34,3 +34,6 @@ typings/
 
 # Firebase config
 app/App_Resources/Android/google-services.json
+
+# Keystore
+.keystore

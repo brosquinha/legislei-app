@@ -1,5 +1,5 @@
 import { EventData, fromObject } from "tns-core-modules/data/observable";
-import { Page } from "tns-core-modules/ui/page";
+import { Page, ShowModalOptions } from "tns-core-modules/ui/page";
 import { topmost } from "tns-core-modules/ui/frame/frame";
 import { confirm } from "tns-core-modules/ui/dialogs";
 
@@ -60,7 +60,7 @@ export async function confirmDelete(args: EventData) {
     }).then(result => {
         if (!result)
             return
-        deleteAPI(`usuarios/inscricoes/${assemblyman.casa}/${assemblyman.id}`, response => {
+        deleteAPI(`usuarios/inscricoes/${encodeURIComponent(assemblyman.casa)}/${assemblyman.id}`, response => {
             if (response.statusCode != 200) {
                 alert(response.content.toJSON().message);
             } else {
@@ -74,7 +74,16 @@ export async function confirmDelete(args: EventData) {
 }
 
 export function newSubscription(args: EventData) {
-    return alert("Tela em construção")
+    const page = <Page>args.object;
+    const modalOptions: ShowModalOptions = {
+        context: {},
+        closeCallback: () => topmost().navigate({
+            moduleName: "subscriptions-home/subscriptions-home-page",
+            clearHistory: true
+        }),
+        fullscreen: true
+    }
+    page.showModal("new-subscription/modal-root", modalOptions);
 }
 
 export async function confirmLogout(args: EventData) {
